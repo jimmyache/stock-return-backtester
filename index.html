@@ -18,7 +18,6 @@
     </div>
     <div class="hero-side">
       <span id="fxBadge" class="badge">今日匯率：讀取中…</span>
-      <span id="workerBadge" class="badge">Yahoo 連線檢查中</span>
     </div>
   </header>
 
@@ -107,22 +106,8 @@
   let searchSeq = 0;
   let isRunning = false;
 
-  checkWorker();
   loadTodayFx();
   validateDates();
-
-  async function checkWorker() {
-    try {
-      const data = await api('/health', 2, 12000);
-      updateWorkerBadge(true, data.provider || 'Yahoo Finance', data.version || '');
-      if (data.version !== 'v1.1') {
-        setStatus('Cloudflare Worker 尚未更新為 v1.1，請先重新部署新版 Worker。', 'warning');
-      }
-    } catch (e) {
-      updateWorkerBadge(false);
-      setStatus(`資料服務暫時無法連線：${e.message}`, 'error');
-    }
-  }
 
 
   async function loadTodayFx() {
@@ -152,11 +137,6 @@
     const m = String(date.getMonth() + 1).padStart(2, '0');
     const d = String(date.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
-  }
-
-  function updateWorkerBadge(ok, provider='Yahoo Finance', version='') {
-    $('workerBadge').textContent = ok ? `${provider} 已連線${version ? ` · ${version}` : ''}` : 'Yahoo 連線失敗';
-    $('workerBadge').className = ok ? 'badge ok' : 'badge';
   }
 
   $('lumpBtn').addEventListener('click', () => setMode('lumpSum'));
@@ -324,39 +304,30 @@
       const seen = new Set([resolvedMain.symbol]);
       const benchmarkTargets = BENCHMARKS.filter(x => !seen.has(x.symbol));
 
-      setStatus('主標的資料完成，正在批次取得比較基準與 USD/TWD…');
-
-      let batch = null;
-      try {
-        const batchSymbols = [...benchmarkTargets.map(x => x.symbol), 'TWD=X'];
-        batch = await fetchChartBatch(batchSymbols, addDays(priceFetchStart, -10), end);
-      } catch {
-        // 若批次端點本身失敗，下面會逐一 fallback。
-      }
+      setStatus('主標的資料完成，正在取得比較基準…');
 
       for (const b of benchmarkTargets) {
         try {
-          let dataset = batch?.[b.symbol]?.data || null;
-          if (!dataset) {
-            dataset = await fetchDatasetWithTaiwanFallback(b, priceFetchStart, end);
-          }
-          if (!dataset?.bars?.length) throw new Error(batch?.[b.symbol]?.error || '沒有可用歷史價格');
+          const dataset = await fetchDatasetWithTaiwanFallback(b, priceFetchStart, end);
+          if (!dataset?.bars?.length) throw new Error('沒有可用歷史價格');
           configs.push({symbol:b, dataset});
         } catch (err) {
           benchmarkFailures.push({symbol:b, error:err?.message || String(err)});
         }
+        // 刻意放慢比較基準的 Yahoo 請求，避免短時間密集請求。
+        await sleep(900);
       }
 
-      let fxDataset = batch?.['TWD=X']?.data || null;
       const hasUsdMain = currencyForSymbol(mainDataset.symbol, mainDataset.currency) === 'USD';
       const hasUsdBenchmark = configs.some(x => currencyForSymbol(x.dataset.symbol,x.dataset.currency) === 'USD');
+      let fxDataset = null;
 
-      if ((hasUsdMain || hasUsdBenchmark) && !fxDataset?.bars?.length) {
+      if (hasUsdMain || hasUsdBenchmark) {
         try {
+          setStatus('正在取得 USD/TWD 歷史匯率…');
           fxDataset = await fetchChart('TWD=X', addDays(start,-10), end);
         } catch (fxErr) {
-          if (hasUsdMain) throw new Error(`無法取得 USD/TWD 歷史匯率：${fxErr.message}`);
-          // SPY 等美元比較基準失敗時，不讓台股主回測整體失敗。
+          if (hasUsdMain) throw fxErr;
           for (let i=configs.length-1; i>=1; i--) {
             if (currencyForSymbol(configs[i].dataset.symbol, configs[i].dataset.currency) === 'USD') {
               benchmarkFailures.push({symbol:configs[i].symbol, error:'USD/TWD 歷史匯率取得失敗'});
@@ -386,19 +357,12 @@
         : '';
       setStatus(`完成：共計算 ${results.length} 個標的${failMsg}。Yahoo 資料實際可用起日可能晚於你輸入的日期。`);
     } catch (err) {
-      setStatus(`回測失敗：${err.message}。若右上角未顯示 v1.1，請先重新部署新版 Cloudflare Worker。`, 'error');
+      setStatus('回測失敗', 'error');
     } finally {
       isRunning = false;
       updateRunButtonState();
     }
   });
-
-  async function fetchChartBatch(symbols, start, end) {
-    const unique = [...new Set(symbols.filter(Boolean))];
-    const path = `/batch-chart?symbols=${encodeURIComponent(unique.join(','))}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
-    const payload = await api(path, 2, 90000);
-    return payload?.results || {};
-  }
 
   async function fetchDatasetWithTaiwanFallback(symbolInfo, start, end) {
     const enriched = enrichTaiwanInfo(symbolInfo);
@@ -419,11 +383,11 @@
   async function fetchChart(symbol, start, end) {
     const path = `/chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
     try {
-      return await api(path, 3, 65000);
+      return await api(path, 1, 45000);
     } catch (firstError) {
       // 長區間若單次 Yahoo / Worker 請求失敗，自動切成較小區間逐段取得再合併。
       // 短區間則直接回報原始錯誤。
-      if (daysBetween(start, end) < 1400) throw firstError;
+      if (daysBetween(start, end) < 800) throw firstError;
       try {
         return await fetchChartInChunks(symbol, start, end);
       } catch (chunkError) {
@@ -434,12 +398,12 @@
   }
 
   async function fetchChartInChunks(symbol, start, end) {
-    const chunks = makeDateChunks(start, end, 3);
+    const chunks = makeDateChunks(start, end, 2);
     const parts = [];
     for (let i=0; i<chunks.length; i++) {
       const [chunkStart, chunkEnd] = chunks[i];
       const path = `/chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(chunkStart)}&end=${encodeURIComponent(chunkEnd)}`;
-      const part = await api(path, 4, 65000);
+      const part = await api(path, 1, 45000);
       parts.push(part);
       if (i < chunks.length - 1) await sleep(180);
     }
@@ -776,7 +740,7 @@
           ${esc(x.symbol.display || displaySymbol(x.symbol.symbol))}
           <span class="symbol-name">${esc(x.symbol.name || x.symbol.symbol)}</span>
         </td>
-        <td colspan="8" class="fetch-error">資料取得失敗：${esc(x.error || '未知錯誤')}</td>
+        <td colspan="8" class="fetch-error">資料取得失敗</td>
       </tr>`).join('');
 
     table.innerHTML = head + `<tbody>${okRows}${failedRows}</tbody>`;

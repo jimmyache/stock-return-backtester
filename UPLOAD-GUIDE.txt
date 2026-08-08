@@ -1,21 +1,15 @@
-v1.1 更新方式
+v1.2 更新
 
-A. Cloudflare Worker
-1. Workers & Pages → dark-snowflake-d965 → Edit code
-2. 刪除舊程式
-3. 貼上 cloudflare-worker.js
-4. Deploy
-5. 開啟：
-   https://dark-snowflake-d965.jimmyshieh30.workers.dev/health
-6. 確認 version = v1.1
+A. Cloudflare
+- Edit code
+- 貼上 cloudflare-worker.js
+- Deploy
+- /health 確認 version = v1.2
 
-B. GitHub Pages
-1. GitHub → stock-return-backtester
-2. Add file → Upload files
-3. 用新版 index.html 覆蓋舊檔
-4. Commit changes
+B. GitHub
+- 上傳新版 index.html
+- 覆蓋根目錄舊檔
+- Commit
 
-測試：
-- 開始日期選 2014/12/31 → 紅框，開始回測不可按
-- 輸入 3088 → 選取後框內顯示「3088 艾訊」
-- 搜尋結果不應出現 3088.HK、3088.T 或 NASDAQ 共同基金
+網站畫面只保留「今日匯率」，不再顯示 Yahoo 連線版本。
+回測錯誤只顯示「回測失敗」。

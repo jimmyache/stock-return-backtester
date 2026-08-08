@@ -1,17 +1,16 @@
 /**
  * 台股與美股含息回測工具
  * Yahoo Finance Cloudflare Worker
- * Version: v1.1
+ * Version: v1.2
  *
  * No API key required.
  * Routes:
  *   GET /health
  *   GET /search?q=3088
  *   GET /chart?symbol=00631L.TW&start=2015-01-01&end=2026-08-09
- *   GET /batch-chart?symbols=0050.TW,00631L.TW,SPY,^TWII,TWD=X&start=2015-01-01&end=2026-08-09
  */
 
-const VERSION = "v1.1";
+const VERSION = "v1.2";
 const YAHOO_HOSTS = ["query1.finance.yahoo.com", "query2.finance.yahoo.com"];
 const ALLOWED_ORIGINS = new Set([
   "https://jimmyache.github.io",
@@ -21,7 +20,6 @@ const ALLOWED_ORIGINS = new Set([
   "http://127.0.0.1:8000",
 ]);
 const US_EXCHANGES = new Set(["NMS","NYQ","NGM","NCM","ASE","PCX","BTS","BATS","NASDAQ","NYSE","NYSEARCA"]);
-const MAX_BATCH_SYMBOLS = 8;
 
 export default {
   async fetch(request, env, ctx) {
@@ -38,7 +36,6 @@ export default {
       }
       if (url.pathname === "/search") return await handleSearch(url, origin, ctx);
       if (url.pathname === "/chart") return await handleChart(url, origin, ctx);
-      if (url.pathname === "/batch-chart") return await handleBatchChart(url, origin, ctx);
       return json({error:"Not found",version:VERSION},404,origin);
     } catch (error) {
       return json({error:friendlyError(error),version:VERSION},502,origin,10);
@@ -50,7 +47,7 @@ async function handleSearch(url, origin, ctx) {
   const q = (url.searchParams.get("q") || "").trim();
   if (!q) return json({results:[],version:VERSION},200,origin,300);
 
-  const cacheKey = new Request(`${url.origin}/_cache/v11/search?q=${encodeURIComponent(q.toLowerCase())}`);
+  const cacheKey = new Request(`${url.origin}/_cache/v12/search?q=${encodeURIComponent(q.toLowerCase())}`);
   const cached = await caches.default.match(cacheKey);
   if (cached) return withCors(cached, origin);
 
@@ -92,79 +89,35 @@ async function handleChart(url, origin, ctx) {
   return json(data,200,origin,cacheTtl(end));
 }
 
-async function handleBatchChart(url, origin, ctx) {
-  const start = (url.searchParams.get("start") || "2015-01-01").trim();
-  const end = (url.searchParams.get("end") || today()).trim();
-  if (!isDate(start) || !isDate(end) || start > end) {
-    return json({error:"Invalid date range",version:VERSION},400,origin);
-  }
-
-  const symbols = [...new Set(
-    (url.searchParams.get("symbols") || "")
-      .split(",")
-      .map(normalizeSymbol)
-      .filter(Boolean)
-  )].slice(0, MAX_BATCH_SYMBOLS);
-
-  if (!symbols.length) return json({error:"symbols is required",version:VERSION},400,origin);
-
-  const results = {};
-  for (let i=0; i<symbols.length; i++) {
-    const symbol = symbols[i];
-    try {
-      results[symbol] = {data: await getChartData(symbol,start,end,url.origin,ctx)};
-    } catch (error) {
-      results[symbol] = {error:friendlyError(error)};
-    }
-
-    // Yahoo 對連續查詢較敏感，批次中主動留間隔。
-    if (i < symbols.length - 1) {
-      await sleep(results[symbol].error ? 1300 : 650);
-    }
-  }
-
-  return json({results,version:VERSION},200,origin,60);
-}
-
 async function getChartData(symbol, start, end, originBase, ctx) {
   const cacheKey = new Request(
-    `${originBase}/_cache/v11/chart?symbol=${encodeURIComponent(symbol)}&start=${start}&end=${end}`
+    `${originBase}/_cache/v12/chart?symbol=${encodeURIComponent(symbol)}&start=${start}&end=${end}`
   );
+
   const cached = await caches.default.match(cacheKey);
   if (cached) return await cached.json();
 
-  let data;
-  try {
-    // 先用單一 Yahoo request，成功時最省請求數、也最不易被限流。
-    data = await fetchYahooChartSegment(symbol,start,end,3);
-  } catch (fullError) {
-    // 單次長區間失敗才分段，避免平常為每個標的製造太多 Yahoo requests。
-    if (daysBetween(start,end) < 2200) throw fullError;
-
-    const ranges = splitRanges(start,end,4);
-    const parts = [];
-    for (let i=0; i<ranges.length; i++) {
-      const [segStart,segEnd] = ranges[i];
-      parts.push(await fetchYahooChartSegment(symbol,segStart,segEnd,3));
-      if (i < ranges.length - 1) await sleep(700);
-    }
-    data = mergeChartParts(parts,symbol);
-  }
+  // v1.2：Worker 不再自行做長區間分段。
+  // 若整段 Yahoo 查詢失敗，前端會切成較小的 2 年區間再逐段呼叫 /chart。
+  // 這樣每一次 Worker invocation 都保持短小，避免 Worker 與瀏覽器 timeout 疊加。
+  const data = await fetchYahooChartSegment(symbol, start, end, 2);
 
   data.source = "Yahoo Finance";
   data.version = VERSION;
 
   const cachedResponse = new Response(JSON.stringify(data), {
-    headers:{
+    headers: {
       "Content-Type":"application/json; charset=utf-8",
       "Cache-Control":`public, max-age=${cacheTtl(end)}`,
     }
   });
-  ctx.waitUntil(caches.default.put(cacheKey,cachedResponse));
+
+  ctx.waitUntil(caches.default.put(cacheKey, cachedResponse));
   return data;
 }
 
-async function fetchYahooChartSegment(symbol,start,end,attempts=3) {
+
+async function fetchYahooChartSegment(symbol,start,end,attempts=2) {
   const period1 = Math.floor(Date.parse(`${start}T00:00:00Z`)/1000);
   const period2 = Math.floor((Date.parse(`${end}T00:00:00Z`)+86400000)/1000);
   const params = new URLSearchParams({
@@ -186,13 +139,13 @@ async function fetchYahooChartSegment(symbol,start,end,attempts=3) {
   return normalizeYahooChart(result,symbol);
 }
 
-async function fetchYahooJson(path, attempts=3) {
+async function fetchYahooJson(path, attempts=2) {
   let lastError = null;
 
   for (let attempt=0; attempt<attempts; attempt++) {
     const host = YAHOO_HOSTS[attempt % YAHOO_HOSTS.length];
     const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 22000);
+    const timer = setTimeout(() => controller.abort(), 10000);
 
     try {
       const response = await fetch(`https://${host}${path}`, {
@@ -200,7 +153,7 @@ async function fetchYahooJson(path, attempts=3) {
           Accept:"application/json,text/plain,*/*",
           "Accept-Language":"zh-TW,zh;q=0.9,en;q=0.8",
           Referer:"https://finance.yahoo.com/",
-          "User-Agent":"Mozilla/5.0 (compatible; stock-return-backtester/1.1)",
+          "User-Agent":"Mozilla/5.0 (compatible; stock-return-backtester/1.2)",
         },
         redirect:"follow",
         signal:controller.signal,
@@ -222,7 +175,7 @@ async function fetchYahooJson(path, attempts=3) {
     }
 
     if (attempt < attempts - 1) {
-      await sleep(900 * Math.pow(2,attempt) + Math.floor(Math.random()*300));
+      await sleep(650 * Math.pow(2,attempt) + Math.floor(Math.random()*220));
     }
   }
 
