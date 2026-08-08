@@ -1,15 +1,20 @@
-v1.2 更新
+更新順序
 
-A. Cloudflare
-- Edit code
-- 貼上 cloudflare-worker.js
-- Deploy
-- /health 確認 version = v1.2
+A. Cloudflare Worker
+1. Workers & Pages → 目前的 Worker → Edit code
+2. 刪除舊程式
+3. 貼上 cloudflare-worker.js
+4. Deploy
+5. /health 應看到：
+   {"ok":true,"provider":"Yahoo Finance","apiKeyRequired":false}
 
-B. GitHub
-- 上傳新版 index.html
-- 覆蓋根目錄舊檔
-- Commit
+B. GitHub Pages
+1. 上傳新版 index.html
+2. 覆蓋根目錄 index.html
+3. Commit
 
-網站畫面只保留「今日匯率」，不再顯示 Yahoo 連線版本。
-回測錯誤只顯示「回測失敗」。
+測試建議：
+- GOOG：2018/01/01 ～ 今天
+- SPY：2015/01/01 ～ 今天
+- 較晚上市標的：開始日仍填 2015/01/01，結果「回測區間」應自動從其第一個可用交易日開始
+- 金額輸入 1000.5：紅框且開始回測不能按
