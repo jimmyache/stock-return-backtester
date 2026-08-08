@@ -1,18 +1,6 @@
-上傳 GitHub 最簡單方式
-
 1. 解壓縮 ZIP。
 2. GitHub → stock-return-backtester → Add file → Upload files。
-3. 用新版 index.html 覆蓋 Repository 根目錄原本的 index.html。
-4. Settings → Pages。
-5. Source = Deploy from a branch。
-6. Branch = main。
-7. Folder = / (root)。
-8. Save。
-9. 開啟：
-   https://jimmyache.github.io/stock-return-backtester/
-
-新版功能：
-- 移除 Yahoo / API Key 相關宣告文字
-- 股票欄顯示「股票名稱或代號（台股或美股）」
-- 0050、00631L、SPY、^TWII 固定自動比較
-- 自動顯示今日 USD/TWD：1 美元 = xx.xx 台幣
+3. 用新版 index.html 覆蓋根目錄舊版。
+4. Settings → Pages → Deploy from a branch。
+5. main + / (root) → Save。
+6. 等待 Pages 重新部署。
