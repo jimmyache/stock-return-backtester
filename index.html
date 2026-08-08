@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>台股與美股含息回測｜Yahoo 無 API Key 版</title>
+<meta name="description" content="台股與美股含息報酬回測，支援單筆投入、定期定額、股息再投入、USD/TWD 當日匯率換算與基準比較。">
+<style>
+:root{font-family:Inter,"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color:#172033;background:#f5f7fa;line-height:1.5}
+*{box-sizing:border-box}body{margin:0;background:#f5f7fa}button,input{font:inherit}button{cursor:pointer}main{max-width:1200px;margin:auto;padding:26px 18px 60px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}.eyebrow{margin:0 0 5px;color:#526d82;font-size:12px;font-weight:800;letter-spacing:.1em}.hero h1{margin:0;font-size:clamp(28px,4vw,42px)}.hero p{margin:8px 0 0;color:#5d6b7c}.badge{white-space:nowrap;padding:8px 12px;border-radius:999px;background:#fff3cd;color:#6b5200;border:1px solid #ead98b;font-weight:750}.badge.ok{background:#e9f7ee;color:#176b39;border-color:#b8e2c6}.panel,.settings,.results,.notice{background:#fff;border:1px solid #dce3eb;border-radius:16px;box-shadow:0 8px 28px rgba(30,45,70,.045)}.settings{padding:17px 18px;margin-bottom:16px}.settings-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:end}.settings label,.field label{display:block;font-weight:760;margin-bottom:7px}.settings small{display:block;margin-top:7px;color:#66758a}.settings input,.field input{width:100%;padding:11px 12px;border:1px solid #c9d3df;border-radius:10px;background:white}.panel{padding:20px}.field{margin-bottom:16px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.symbol-field{position:relative}.dropdown{position:absolute;z-index:20;top:76px;left:0;right:0;background:#fff;border:1px solid #ccd6e2;border-radius:12px;box-shadow:0 12px 30px rgba(30,45,70,.14);max-height:330px;overflow:auto}.dropdown button{width:100%;display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;text-align:left;padding:10px 12px;border:0;border-bottom:1px solid #edf1f5;background:#fff}.dropdown button:hover{background:#f2f7fb}.dropdown button strong{font-variant-numeric:tabular-nums}.dropdown button small{color:#6b778c}.selection{margin:7px 0 0;color:#5b6b7f;font-size:14px}.segmented{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}.segmented button{padding:10px;border:0;background:#fff}.segmented button.active{background:#172b4d;color:#fff}.switches{display:flex;flex-wrap:wrap;gap:20px;margin:8px 0 18px}.switches label{font-weight:650}.primary,.secondary{border:0;border-radius:10px;padding:11px 16px;font-weight:800}.primary{background:#1976d2;color:#fff;min-width:150px}.primary:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#eef3f8;color:#243b53}.status{margin:12px 0 0;color:#334e68;white-space:pre-line}.notice{padding:13px 15px;margin-bottom:16px;color:#4b5f73;background:#f9fbfd}.notice strong{color:#263b50}.fx-note{display:grid;gap:4px;background:#f2f7fc;border:1px solid #d8e6f2;border-radius:12px;padding:12px 14px;margin-bottom:15px}.fx-note span{color:#526174}.results{margin-top:18px;padding:18px}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}.result-card{border:1px solid #dde5ee;border-radius:14px;padding:15px}.result-card h2{font-size:19px;margin:0 0 10px}.result-card h2 span{font-size:14px;font-weight:600;color:#637083}.result-card h2 em{display:inline-block;font-style:normal;font-size:11px;margin-left:5px;background:#eef3f8;border-radius:999px;padding:3px 7px}.result-card dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:9px}.result-card dl div{background:#f8fafc;border-radius:9px;padding:9px}.result-card dt{font-size:12px;color:#65758b}.result-card dd{margin:2px 0 0;font-weight:800}.result-card p{font-size:13px;color:#65758b}.result-card details{font-size:13px}.chart-wrap{margin-top:18px;border:1px solid #dde5ee;border-radius:14px;padding:12px}.chart-title{font-weight:800;margin:0 0 8px}.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;margin:6px 0 8px}.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:18px;height:3px;background:#222;display:inline-block}canvas{width:100%;height:360px;display:block;background:#fff;border-radius:8px}footer{margin-top:20px;color:#6b778c;font-size:13px;text-align:center}.warning{color:#8a5a00}.error{color:#a61b1b}.muted{color:#6b778c}@media(max-width:760px){.hero{display:block}.badge{display:inline-block;margin-top:12px}.field-grid,.settings-row{grid-template-columns:1fr}.dropdown{top:76px}.result-card dl{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<main>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">TOTAL RETURN BACKTESTER · YAHOO · NO API KEY · READY</p>
+      <h1>台股與美股含息回測</h1>
+      <p>Yahoo Finance 歷史價格／股息／拆股，台股與美股皆可查；美股以每日 USD/TWD 換算新台幣。</p>
+    </div>
+    <span id="workerBadge" class="badge">Yahoo 連線檢查中</span>
+  </header>
+
+  <section class="notice">
+    <strong>Yahoo 無 API Key 版。</strong> 資料服務已設定完成，訪客不需要輸入 Cloudflare Worker 網址或申請 API Key；網站會自動透過後端中繼取得 Yahoo Finance 資料。
+  </section>
+
+  <form id="form" class="panel">
+    <section class="field symbol-field">
+      <label for="symbol">股票名稱或代號</label>
+      <input id="symbol" value="2330" autocomplete="off" placeholder="例如 23、2330、台積電、AAPL、Apple" />
+      <div id="dropdown" class="dropdown" hidden></div>
+      <p id="selection" class="selection">已選：2330.TW 台積電</p>
+    </section>
+
+    <section class="field-grid">
+      <div class="field"><label for="start">開始日期</label><input id="start" type="date" min="1990-01-01" value="2015-01-01" /></div>
+      <div class="field"><label for="end">結束日期</label><input id="end" type="date" /></div>
+      <div class="field">
+        <label>投入方式</label>
+        <div class="segmented"><button id="lumpBtn" type="button" class="active">單筆投入</button><button id="monthlyBtn" type="button">每月定期定額</button></div>
+      </div>
+      <div class="field"><label id="amountLabel" for="amount">投入金額（TWD）</label><input id="amount" type="number" min="1" step="1000" value="1000000" /></div>
+    </section>
+
+    <aside class="fx-note"><strong>美股換匯規則</strong><span>每次投入以該買進日 Yahoo `TWD=X` 的 USD/TWD 收盤匯率換成美元；每日資產亦使用當天匯率換回 TWD。若當天沒有匯率，使用最近較早的外匯交易日。</span></aside>
+
+    <section class="switches">
+      <label><input id="reinvest" type="checkbox" checked /> 股息再投入</label>
+      <label><input id="benchmarks" type="checkbox" checked /> 比較 0050、00631L、SPY、台灣大盤</label>
+    </section>
+
+    <button id="runBtn" class="primary" type="submit">開始回測</button>
+    <p id="status" class="status" role="status"></p>
+  </form>
+
+  <section id="results" class="results" hidden>
+    <div id="resultGrid" class="result-grid"></div>
+    <div class="chart-wrap"><p class="chart-title">資產曲線（TWD）</p><div id="legend" class="legend"></div><canvas id="chart"></canvas></div>
+  </section>
+
+  <footer>資料來源：Yahoo Finance。台灣大盤使用 ^TWII「價格指數」，不是官方含息報酬指數。Yahoo 資料可能因授權、流量限制或介面變更而中斷；本工具僅供研究與教育用途，不構成投資建議。</footer>
+</main>
+<script>
+(() => {
+  'use strict';
+
+  const QUICK = [
+    {symbol:'2301.TW',display:'2301',name:'光寶科',exchange:'Taiwan',currency:'TWD'},
+    {symbol:'2308.TW',display:'2308',name:'台達電',exchange:'Taiwan',currency:'TWD'},
+    {symbol:'2330.TW',display:'2330',name:'台積電',exchange:'Taiwan',currency:'TWD'},
+    {symbol:'0050.TW',display:'0050',name:'元大台灣50',exchange:'Taiwan',currency:'TWD'},
+    {symbol:'00631L.TW',display:'00631L',name:'元大台灣50正2',exchange:'Taiwan',currency:'TWD'},
+    {symbol:'AAPL',display:'AAPL',name:'Apple Inc.',exchange:'US',currency:'USD'},
+    {symbol:'MSFT',display:'MSFT',name:'Microsoft',exchange:'US',currency:'USD'},
+    {symbol:'NVDA',display:'NVDA',name:'NVIDIA',exchange:'US',currency:'USD'},
+    {symbol:'SPY',display:'SPY',name:'SPDR S&P 500 ETF Trust',exchange:'US',currency:'USD'},
+  ];
+
+  const BENCHMARKS = [
+    {symbol:'0050.TW',display:'0050',name:'元大台灣50',exchange:'Taiwan',currency:'TWD',benchmark:true},
+    {symbol:'00631L.TW',display:'00631L',name:'元大台灣50正2',exchange:'Taiwan',currency:'TWD',benchmark:true},
+    {symbol:'SPY',display:'SPY',name:'S&P 500 可投資代理',exchange:'US',currency:'USD',benchmark:true},
+    {symbol:'^TWII',display:'^TWII',name:'台灣加權價格指數（非含息）',exchange:'Taiwan Index',currency:'TWD',benchmark:true,priceIndex:true},
+  ];
+
+  const $ = (id) => document.getElementById(id);
+  $('end').value = new Date().toISOString().slice(0,10);
+  let mode = 'lumpSum';
+  let selected = QUICK.find(x => x.symbol === '2330.TW');
+  const workerBase = 'https://dark-snowflake-d965.jimmyshieh30.workers.dev';
+  let searchTimer = null;
+  let searchSeq = 0;
+
+  checkWorker();
+
+  async function checkWorker() {
+    try {
+      const data = await api('/health');
+      updateWorkerBadge(true, data.provider || 'Yahoo Finance');
+    } catch (e) {
+      updateWorkerBadge(false);
+      setStatus(`資料服務暫時無法連線：${e.message}`, 'error');
+    }
+  }
+
+  function updateWorkerBadge(ok, provider='Yahoo Finance') {
+    $('workerBadge').textContent = ok ? `${provider} 已連線` : 'Yahoo 連線失敗';
+    $('workerBadge').className = ok ? 'badge ok' : 'badge';
+  }
+
+  $('lumpBtn').addEventListener('click', () => setMode('lumpSum'));
+  $('monthlyBtn').addEventListener('click', () => setMode('monthly'));
+  function setMode(next) {
+    mode = next;
+    $('lumpBtn').classList.toggle('active', mode === 'lumpSum');
+    $('monthlyBtn').classList.toggle('active', mode === 'monthly');
+    $('amountLabel').textContent = mode === 'lumpSum' ? '投入金額（TWD）' : '每月投入金額（TWD）';
+  }
+
+  $('symbol').addEventListener('input', () => {
+    selected = null;
+    $('selection').textContent = '請從下拉選單選取；也可輸入完整 Yahoo 代號。';
+    clearTimeout(searchTimer);
+    const raw = $('symbol').value.trim();
+    showLocalMatches(raw);
+    if (workerBase && raw) searchTimer = setTimeout(() => remoteSearch(raw), 260);
+  });
+
+  $('symbol').addEventListener('focus', () => showLocalMatches($('symbol').value.trim()));
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.symbol-field')) $('dropdown').hidden = true;
+  });
+
+  function showLocalMatches(raw) {
+    const q = raw.toLowerCase();
+    const list = QUICK.filter(x => !q || x.display.toLowerCase().includes(q) || x.symbol.toLowerCase().includes(q) || x.name.toLowerCase().includes(q)).slice(0,12);
+    renderDropdown(list);
+  }
+
+  async function remoteSearch(raw) {
+    const seq = ++searchSeq;
+    try {
+      const data = await api(`/search?q=${encodeURIComponent(raw)}`);
+      if (seq !== searchSeq) return;
+      const remote = (data.results || []).map(x => ({
+        symbol:x.symbol,
+        display:displaySymbol(x.symbol),
+        name:x.name || x.symbol,
+        exchange:x.exchangeDisplay || x.exchange || '',
+        currency:currencyForSymbol(x.symbol, x.currency),
+      }));
+      const local = QUICK.filter(x => {
+        const q=raw.toLowerCase();return x.display.toLowerCase().includes(q)||x.symbol.toLowerCase().includes(q)||x.name.toLowerCase().includes(q);
+      });
+      const merged = uniqueBySymbol([...local, ...remote]).slice(0,18);
+      renderDropdown(merged);
+    } catch {
+      // Local suggestions remain usable; Yahoo may rate-limit search independently.
+    }
+  }
+
+  function renderDropdown(items) {
+    const box = $('dropdown');
+    box.innerHTML = '';
+    if (!items.length) { box.hidden = true; return; }
+    items.forEach(item => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.innerHTML = `<strong>${esc(item.display || item.symbol)}</strong><span>${esc(item.name || item.symbol)}</span><small>${esc(item.exchange || '')}</small>`;
+      b.addEventListener('click', () => selectSymbol(item));
+      box.appendChild(b);
+    });
+    box.hidden = false;
+  }
+
+  function selectSymbol(item) {
+    selected = {...item, currency:currencyForSymbol(item.symbol,item.currency)};
+    $('symbol').value = item.display || displaySymbol(item.symbol);
+    $('selection').textContent = `已選：${item.symbol} ${item.name || ''}`;
+    $('dropdown').hidden = true;
+  }
+
+  $('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const start = $('start').value;
+    const end = $('end').value;
+    const amount = Number($('amount').value);
+    if (!start || !end || start > end) return setStatus('請確認開始與結束日期。', 'error');
+    if (!(amount > 0)) return setStatus('投入金額必須大於 0。', 'error');
+
+    const mainSymbol = selected || inferManualSymbol($('symbol').value);
+    if (!mainSymbol) return setStatus('無法判斷股票代號。台股可輸入 2330，美股可輸入 AAPL。', 'error');
+
+    $('runBtn').disabled = true;
+    $('results').hidden = true;
+    setStatus('正在向 Yahoo Finance 取得歷史資料…');
+
+    try {
+      const mainDataset = await fetchDatasetWithTaiwanFallback(mainSymbol, start, end);
+      const resolvedMain = {...mainSymbol, symbol:mainDataset.symbol, display:displaySymbol(mainDataset.symbol), currency:currencyForSymbol(mainDataset.symbol, mainDataset.currency)};
+      if (!mainDataset.bars.length) throw new Error(`${resolvedMain.symbol} 沒有可用歷史價格。`);
+
+      const configs = [{symbol:resolvedMain, dataset:mainDataset}];
+      if ($('benchmarks').checked) {
+        setStatus('主標的資料完成，正在取得比較基準…');
+        const seen = new Set([resolvedMain.symbol]);
+        const benchmarkData = await Promise.all(BENCHMARKS.filter(b => !seen.has(b.symbol)).map(async b => {
+          try { return {symbol:b, dataset:await fetchDatasetWithTaiwanFallback(b,start,end)}; }
+          catch (err) { return {symbol:b, error:err}; }
+        }));
+        benchmarkData.forEach(x => { if (!x.error && x.dataset?.bars?.length) configs.push(x); });
+      }
+
+      const needsFx = configs.some(x => currencyForSymbol(x.dataset.symbol,x.dataset.currency) === 'USD');
+      let fxDataset = null;
+      if (needsFx) {
+        setStatus('正在取得 Yahoo USD/TWD 歷史匯率…');
+        fxDataset = await fetchChart('TWD=X', addDays(start,-10), end);
+        if (!fxDataset.bars.length) throw new Error('無法取得 USD/TWD 歷史匯率。');
+      }
+
+      setStatus('正在計算回測…');
+      const results = [];
+      for (const item of configs) {
+        const result = backtest(item.symbol, item.dataset, {
+          startDate:start,
+          endDate:end,
+          mode,
+          amountTwd:amount,
+          reinvest:$('reinvest').checked,
+          fxDataset,
+        });
+        if (item.symbol.priceIndex) result.warnings.push('^TWII 是台灣加權「價格指數」，不含股息，僅供大盤價格走勢比較。');
+        results.push(result);
+      }
+      renderResults(results);
+      setStatus(`完成：共計算 ${results.length} 個標的。Yahoo 資料實際可用起日可能晚於你輸入的日期。`);
+    } catch (err) {
+      setStatus(`回測失敗：${err.message}`, 'error');
+    } finally {
+      $('runBtn').disabled = false;
+    }
+  });
+
+  async function fetchDatasetWithTaiwanFallback(symbolInfo, start, end) {
+    const raw = symbolInfo.symbol || symbolInfo.display;
+    if (/^\d{4,6}[A-Z]?$/i.test(raw)) {
+      try { return await fetchChart(`${raw}.TW`, start, end); }
+      catch (first) {
+        try { return await fetchChart(`${raw}.TWO`, start, end); }
+        catch { throw first; }
+      }
+    }
+    return fetchChart(raw, start, end);
+  }
+
+  async function fetchChart(symbol, start, end) {
+    return api(`/chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+  }
+
+  async function api(path) {
+    const response = await fetch(workerBase + path, {headers:{Accept:'application/json'}});
+    let data = null;
+    try { data = await response.json(); } catch { /* ignore */ }
+    if (!response.ok) throw new Error(data?.error || `${response.status} ${response.statusText}`);
+    return data;
+  }
+
+  function backtest(symbol, dataset, config) {
+    const warnings = [];
+    const bars = (dataset.bars || []).filter(b => b.date >= config.startDate && b.date <= config.endDate && Number(b.close) > 0).sort((a,b)=>a.date.localeCompare(b.date));
+    if (!bars.length) throw new Error(`${symbol.symbol} 在選定期間沒有價格資料`);
+    const assetCurrency = currencyForSymbol(dataset.symbol,dataset.currency);
+    const requiresFx = assetCurrency === 'USD';
+    const fxPoints = requiresFx ? normalizeFx(config.fxDataset?.bars || []) : [];
+    const fxFallbackDates = new Set();
+    let lastFxIndex = 0;
+
+    function getFx(date) {
+      if (!requiresFx) return 1;
+      while (lastFxIndex + 1 < fxPoints.length && fxPoints[lastFxIndex + 1].date <= date) lastFxIndex++;
+      let p = fxPoints[lastFxIndex];
+      if (!p || p.date > date) {
+        let lo=0,hi=fxPoints.length-1,ans=-1;
+        while(lo<=hi){const mid=(lo+hi)>>1;if(fxPoints[mid].date<=date){ans=mid;lo=mid+1}else hi=mid-1;}
+        if(ans<0) throw new Error(`${date} 之前沒有 USD/TWD 匯率`);
+        p=fxPoints[ans];lastFxIndex=ans;
+      }
+      if (p.date !== date) fxFallbackDates.add(date);
+      return p.rate;
+    }
+
+    const divMap = new Map();
+    (dataset.dividends || []).forEach(d => { if(d.date>=config.startDate&&d.date<=config.endDate) divMap.set(d.date,(divMap.get(d.date)||0)+Number(d.amount||0)); });
+    const splitMap = new Map();
+    (dataset.splits || []).forEach(s => { if(s.date>=config.startDate&&s.date<=config.endDate) splitMap.set(s.date,(splitMap.get(s.date)||1)*Number(s.ratio||1)); });
+
+    let shares = 0;
+    let cashAsset = 0;
+    let contributedTwd = 0;
+    let dividendsAsset = 0;
+    let dividendsTwdAtEvent = 0;
+    let lastContributionMonth = null;
+    let lumpDone = false;
+    const cashFlows = [];
+    const timeline = [];
+
+    for (const bar of bars) {
+      const date = bar.date;
+      const close = Number(bar.close);
+      const fx = getFx(date);
+
+      const split = splitMap.get(date);
+      if (split && split > 0 && split !== 1) shares *= split;
+
+      const dividendPerShare = divMap.get(date) || 0;
+      if (dividendPerShare > 0 && shares > 0) {
+        const dividend = shares * dividendPerShare;
+        dividendsAsset += dividend;
+        dividendsTwdAtEvent += dividend * fx;
+        if (config.reinvest) shares += dividend / close;
+        else cashAsset += dividend;
+      }
+
+      let investToday = false;
+      if (config.mode === 'lumpSum' && !lumpDone) {
+        investToday = true;
+        lumpDone = true;
+      } else if (config.mode === 'monthly') {
+        const ym = date.slice(0,7);
+        if (ym !== lastContributionMonth) {
+          investToday = true;
+          lastContributionMonth = ym;
+        }
+      }
+
+      if (investToday) {
+        const twd = config.amountTwd;
+        const assetCash = requiresFx ? twd / fx : twd;
+        shares += assetCash / close;
+        contributedTwd += twd;
+        cashFlows.push({date, amount:-twd});
+      }
+
+      const valueAsset = shares * close + cashAsset;
+      const valueTwd = valueAsset * fx;
+      timeline.push({date,value:valueTwd,valueAsset,shares,cashAsset,fxRate:requiresFx?fx:undefined});
+    }
+
+    const last = timeline[timeline.length-1];
+    cashFlows.push({date:last.date,amount:last.value});
+    const profit = last.value - contributedTwd;
+    const annualizedReturn = xirr(cashFlows);
+    if (bars[0].date !== config.startDate) warnings.push(`實際回測起日調整為第一個有資料的交易日 ${bars[0].date}。`);
+    if (bars[bars.length-1].date !== config.endDate) warnings.push(`實際回測終日為最後一個有資料的交易日 ${bars[bars.length-1].date}。`);
+    warnings.push('Yahoo Close 搭配 Yahoo 股息與拆股事件逐日模擬；股息再投入假設在除息事件日收盤價立即買回。');
+    warnings.push('回測允許碎股，未計入手續費、證交稅、換匯價差與美股股息預扣稅。');
+    if (requiresFx) {
+      warnings.push('美股投入使用買進日 USD/TWD；每日資產以當日 USD/TWD 換回 TWD。');
+      if (fxFallbackDates.size) warnings.push(`${fxFallbackDates.size} 個交易日沒有同日外匯報價，使用最近較早的 USD/TWD 收盤匯率。`);
+    }
+
+    return {
+      symbol:{...symbol,currency:assetCurrency},
+      effectiveStartDate:bars[0].date,
+      effectiveEndDate:bars[bars.length-1].date,
+      contributed:contributedTwd,
+      endingValue:last.value,
+      endingValueInAssetCurrency:last.valueAsset,
+      totalReturnAmount:profit,
+      totalReturnRate:contributedTwd ? profit/contributedTwd : 0,
+      annualizedReturn,
+      dividendsReceived:dividendsTwdAtEvent,
+      dividendsReceivedInAssetCurrency:dividendsAsset,
+      shares,
+      cash:last.cashAsset*last.fxRate || last.cashAsset,
+      cashInAssetCurrency:last.cashAsset,
+      endingFxRate:requiresFx?last.fxRate:undefined,
+      maxDrawdown:maxDrawdown(timeline),
+      timeline,
+      warnings,
+    };
+  }
+
+  function normalizeFx(bars) {
+    return bars.map(b => ({date:b.date,rate:Number(b.close)})).filter(x => x.date && Number.isFinite(x.rate) && x.rate>0).sort((a,b)=>a.date.localeCompare(b.date));
+  }
+
+  function maxDrawdown(points) {
+    let peak = 0, dd = 0;
+    for (const p of points) { peak=Math.max(peak,p.value); if(peak>0) dd=Math.min(dd,p.value/peak-1); }
+    return dd;
+  }
+
+  function xirr(flows) {
+    if (flows.length < 2 || !flows.some(f=>f.amount<0) || !flows.some(f=>f.amount>0)) return null;
+    const first = new Date(flows[0].date+'T00:00:00Z');
+    const npv = rate => flows.reduce((sum,f)=>{
+      const years=(new Date(f.date+'T00:00:00Z')-first)/86400000/365.2425;
+      return sum+f.amount/Math.pow(1+rate,years);
+    },0);
+    let low=-.9999,high=10,lv=npv(low),hv=npv(high);
+    for(let i=0;i<16&&Math.sign(lv)===Math.sign(hv);i++){high*=2;hv=npv(high);}
+    if(Math.sign(lv)===Math.sign(hv))return null;
+    for(let i=0;i<220;i++){const mid=(low+high)/2,v=npv(mid);if(Math.abs(v)<1e-7)return mid;if(Math.sign(v)===Math.sign(lv)){low=mid;lv=v}else high=mid;}
+    return (low+high)/2;
+  }
+
+  function renderResults(results) {
+    window.__lastResults = results;
+    $('results').hidden = false;
+    const grid = $('resultGrid'); grid.innerHTML='';
+    const money = new Intl.NumberFormat('zh-TW',{maximumFractionDigits:0});
+    const num = new Intl.NumberFormat('zh-TW',{maximumFractionDigits:4});
+    const usd = new Intl.NumberFormat('zh-TW',{minimumFractionDigits:2,maximumFractionDigits:2});
+    const fxFmt = new Intl.NumberFormat('zh-TW',{minimumFractionDigits:4,maximumFractionDigits:4});
+    const pct = new Intl.NumberFormat('zh-TW',{style:'percent',minimumFractionDigits:2,maximumFractionDigits:2});
+    results.forEach(r => {
+      const a=document.createElement('article');a.className='result-card';
+      const isUsd=r.symbol.currency==='USD';
+      const usdRows=isUsd?`<div><dt>期末資產（USD）</dt><dd>${usd.format(r.endingValueInAssetCurrency)} USD</dd></div><div><dt>期末 USD/TWD</dt><dd>${fxFmt.format(r.endingFxRate||0)}</dd></div>`:'';
+      const warn=[...new Set(r.warnings||[])];
+      a.innerHTML=`<h2>${esc(r.symbol.display||displaySymbol(r.symbol.symbol))} <span>${esc(r.symbol.name||r.symbol.symbol)}</span>${isUsd?'<em>USD → TWD</em>':''}</h2><dl><div><dt>含息損益</dt><dd>${money.format(r.totalReturnAmount)} TWD</dd></div><div><dt>含息報酬率</dt><dd>${pct.format(r.totalReturnRate)}</dd></div><div><dt>年化報酬率（XIRR）</dt><dd>${r.annualizedReturn==null?'N/A':pct.format(r.annualizedReturn)}</dd></div><div><dt>期末資產</dt><dd>${money.format(r.endingValue)} TWD</dd></div><div><dt>累計投入</dt><dd>${money.format(r.contributed)} TWD</dd></div><div><dt>股息收入（事件日換算）</dt><dd>${money.format(r.dividendsReceived)} TWD</dd></div><div><dt>最大回撤</dt><dd>${pct.format(r.maxDrawdown)}</dd></div><div><dt>期末持股</dt><dd>${num.format(r.shares)}</dd></div>${usdRows}</dl><p>${r.effectiveStartDate} — ${r.effectiveEndDate}</p>${warn.length?`<details><summary>計算與資料說明</summary><ul>${warn.map(w=>`<li>${esc(w)}</li>`).join('')}</ul></details>`:''}`;
+      grid.appendChild(a);
+    });
+    drawChart(results);
+  }
+
+  function drawChart(results) {
+    const canvas=$('chart'),wrap=canvas.parentElement;const dpr=Math.max(1,window.devicePixelRatio||1),w=Math.max(320,wrap.clientWidth-24),h=360;
+    canvas.width=w*dpr;canvas.height=h*dpr;canvas.style.width=w+'px';canvas.style.height=h+'px';const ctx=canvas.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+    const all=results.flatMap(r=>r.timeline.map(p=>p.value));let min=Math.min(...all),max=Math.max(...all);if(!Number.isFinite(min)||!Number.isFinite(max))return;if(min===max){min*=.9;max*=1.1;}
+    const left=58,right=14,top=16,bottom=34,pw=w-left-right,ph=h-top-bottom;ctx.strokeStyle='#dfe6ee';ctx.lineWidth=1;ctx.fillStyle='#66758a';ctx.font='12px system-ui';
+    for(let i=0;i<=4;i++){const y=top+ph*i/4;ctx.beginPath();ctx.moveTo(left,y);ctx.lineTo(w-right,y);ctx.stroke();const val=max-(max-min)*i/4;ctx.fillText(compact(val),4,y+4);}
+    const colors=['#1976d2','#d97706','#16803c','#7c3aed','#c2415b','#0891b2'];$('legend').innerHTML='';
+    results.forEach((r,idx)=>{const pts=r.timeline;if(!pts.length)return;ctx.strokeStyle=colors[idx%colors.length];ctx.lineWidth=2;ctx.beginPath();pts.forEach((p,i)=>{const x=left+pw*(i/Math.max(1,pts.length-1)),y=top+ph*(1-(p.value-min)/(max-min));if(i===0)ctx.moveTo(x,y);else ctx.lineTo(x,y);});ctx.stroke();const s=document.createElement('span');s.innerHTML=`<i style="background:${colors[idx%colors.length]}"></i>${esc(r.symbol.display||displaySymbol(r.symbol.symbol))}`;$('legend').appendChild(s);});
+    const start=results[0]?.timeline[0]?.date||'',end=results[0]?.timeline.at(-1)?.date||'';ctx.fillStyle='#66758a';ctx.fillText(start,left,h-10);const ew=ctx.measureText(end).width;ctx.fillText(end,w-right-ew,h-10);
+  }
+
+  window.addEventListener('resize',()=>{if(!$('results').hidden&&window.__lastResults)drawChart(window.__lastResults)});
+
+  function inferManualSymbol(raw) {
+    const q=raw.trim().toUpperCase();
+    if(!q)return null;
+    const local=QUICK.find(x=>x.display.toUpperCase()===q||x.symbol.toUpperCase()===q);if(local)return local;
+    if(/^\d{4,6}[A-Z]?$/.test(q))return {symbol:q,display:q,name:q,exchange:'Taiwan',currency:'TWD'};
+    if(/^[A-Z^][A-Z0-9.^=\-]{0,14}$/.test(q))return {symbol:q,display:q,name:q,exchange:'US',currency:currencyForSymbol(q)};
+    return null;
+  }
+
+  function currencyForSymbol(symbol,currency) {
+    if (/\.(TW|TWO)$/i.test(symbol) || symbol==='^TWII') return 'TWD';
+    if (currency==='TWD'||currency==='USD') return currency;
+    return 'USD';
+  }
+  function displaySymbol(symbol){return symbol.replace(/\.(TW|TWO)$/i,'');}
+  function uniqueBySymbol(items){const seen=new Set();return items.filter(x=>{const k=x.symbol.toUpperCase();if(seen.has(k))return false;seen.add(k);return true;});}
+  function addDays(date,days){return new Date(Date.parse(date+'T00:00:00Z')+days*86400000).toISOString().slice(0,10);}
+  function compact(v){if(Math.abs(v)>=1e8)return(v/1e8).toFixed(1)+'億';if(Math.abs(v)>=1e4)return(v/1e4).toFixed(0)+'萬';return Math.round(v).toLocaleString('zh-TW');}
+  function esc(v){return String(v??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
+  function setStatus(msg,kind=''){$('status').textContent=msg;$('status').className='status '+kind;}
+})();
+</script>
+</body>
+</html>
