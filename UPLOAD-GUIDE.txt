@@ -1,8 +1,8 @@
 GitHub 更新：
 1. 解壓縮 ZIP。
-2. GitHub → stock-return-backtester → Add file → Upload files。
-3. 用新版 index.html 覆蓋根目錄 index.html。
+2. 上傳新版 index.html 到 stock-return-backtester Repository 根目錄。
+3. 覆蓋原本 index.html。
 4. Commit changes。
-5. GitHub Pages 會自動更新。
+5. 等待 GitHub Pages 更新。
 
-這次 Cloudflare Worker 不需要重新部署。
+Cloudflare Worker 不需要重新部署。

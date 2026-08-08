@@ -66,7 +66,7 @@
     </div>
   </section>
 
-  <footer>資料來源：Yahoo Finance。比較基準預設包含 0050、00631L、SPY 與 ^TWII；其中 ^TWII 為台灣加權價格指數，並非官方含息報酬指數。本工具僅供研究與教育用途，不構成投資建議。</footer>
+  <footer>資料來源：Yahoo Finance。比較基準預設包含 0050、00631L、SPY 與加權指數。本工具僅供研究與教育用途，不構成投資建議。</footer>
 </main>
 <script>
 (() => {
@@ -88,7 +88,7 @@
     {symbol:'0050.TW',display:'0050',name:'元大台灣50',exchange:'Taiwan',currency:'TWD',benchmark:true},
     {symbol:'00631L.TW',display:'00631L',name:'元大台灣50正2',exchange:'Taiwan',currency:'TWD',benchmark:true},
     {symbol:'SPY',display:'SPY',name:'S&P 500 可投資代理',exchange:'US',currency:'USD',benchmark:true},
-    {symbol:'^TWII',display:'^TWII',name:'台灣加權價格指數（非含息）',exchange:'Taiwan Index',currency:'TWD',benchmark:true,priceIndex:true},
+    {symbol:'^TWII',display:'加權指數',name:'台灣加權指數',exchange:'Taiwan Index',currency:'TWD',benchmark:true,priceIndex:true},
   ];
 
   const $ = (id) => document.getElementById(id);
@@ -274,7 +274,7 @@
           reinvest:$('reinvest').checked,
           fxDataset,
         });
-        if (item.symbol.priceIndex) result.warnings.push('^TWII 是台灣加權「價格指數」，不含股息，僅供大盤價格走勢比較。');
+        if (item.symbol.priceIndex) result.warnings.push('加權指數使用 Yahoo Finance 的 ^TWII 價格指數資料。');
         results.push(result);
       }
       renderResults(results, benchmarkFailures);
@@ -283,7 +283,7 @@
         : '';
       setStatus(`完成：共計算 ${results.length} 個標的${failMsg}。Yahoo 資料實際可用起日可能晚於你輸入的日期。`);
     } catch (err) {
-      setStatus(`回測失敗：${err.message}`, 'error');
+      setStatus(`回測失敗：${err.message}。請稍候幾秒再重試；長區間會自動分段取得資料。`, 'error');
     } finally {
       $('runBtn').disabled = false;
     }
@@ -302,25 +302,130 @@
   }
 
   async function fetchChart(symbol, start, end) {
-    return api(`/chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`);
+    const path = `/chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    try {
+      return await api(path, 3, 22000);
+    } catch (firstError) {
+      // 長區間若單次 Yahoo / Worker 請求失敗，自動切成較小區間逐段取得再合併。
+      // 短區間則直接回報原始錯誤。
+      if (daysBetween(start, end) < 1400) throw firstError;
+      try {
+        return await fetchChartInChunks(symbol, start, end);
+      } catch (chunkError) {
+        const message = chunkError?.message || firstError?.message || '資料取得失敗';
+        throw new Error(`資料服務暫時無法完成長區間查詢：${message}`);
+      }
+    }
   }
 
-  async function api(path, maxRetries=2) {
+  async function fetchChartInChunks(symbol, start, end) {
+    const chunks = makeDateChunks(start, end, 3);
+    const parts = [];
+    for (let i=0; i<chunks.length; i++) {
+      const [chunkStart, chunkEnd] = chunks[i];
+      const path = `/chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(chunkStart)}&end=${encodeURIComponent(chunkEnd)}`;
+      const part = await api(path, 4, 22000);
+      parts.push(part);
+      if (i < chunks.length - 1) await sleep(180);
+    }
+    return mergeChartParts(parts, symbol);
+  }
+
+  function makeDateChunks(start, end, yearsPerChunk=3) {
+    const out = [];
+    let cursor = start;
+    while (cursor <= end) {
+      const d = new Date(`${cursor}T00:00:00Z`);
+      d.setUTCFullYear(d.getUTCFullYear() + yearsPerChunk);
+      const candidateEnd = addDays(d.toISOString().slice(0,10), -1);
+      const chunkEnd = candidateEnd < end ? candidateEnd : end;
+      out.push([cursor, chunkEnd]);
+      if (chunkEnd >= end) break;
+      cursor = addDays(chunkEnd, 1);
+    }
+    return out;
+  }
+
+  function mergeChartParts(parts, fallbackSymbol) {
+    const valid = parts.filter(Boolean);
+    if (!valid.length) throw new Error(`${fallbackSymbol} 沒有可用資料`);
+
+    const first = valid[0];
+    const merged = {
+      ...first,
+      symbol: first.symbol || fallbackSymbol,
+      bars: [],
+      dividends: [],
+      splits: [],
+    };
+
+    const barMap = new Map();
+    const divMap = new Map();
+    const splitMap = new Map();
+
+    for (const part of valid) {
+      for (const row of (part.bars || [])) {
+        if (row?.date) barMap.set(row.date, row);
+      }
+      for (const row of (part.dividends || [])) {
+        if (row?.date) divMap.set(`${row.date}|${row.amount}`, row);
+      }
+      for (const row of (part.splits || [])) {
+        if (row?.date) splitMap.set(`${row.date}|${row.ratio}`, row);
+      }
+    }
+
+    merged.bars = [...barMap.values()].sort((a,b)=>a.date.localeCompare(b.date));
+    merged.dividends = [...divMap.values()].sort((a,b)=>a.date.localeCompare(b.date));
+    merged.splits = [...splitMap.values()].sort((a,b)=>a.date.localeCompare(b.date));
+    return merged;
+  }
+
+  function daysBetween(start, end) {
+    return Math.max(0, Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86400000));
+  }
+
+  async function api(path, maxRetries=3, timeoutMs=22000) {
     let lastError = null;
+
     for (let attempt=0; attempt<=maxRetries; attempt++) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+
       try {
-        const response = await fetch(workerBase + path, {headers:{Accept:'application/json'}});
+        const response = await fetch(workerBase + path, {
+          headers:{Accept:'application/json'},
+          signal: controller.signal,
+        });
+
         let data = null;
         try { data = await response.json(); } catch { /* ignore */ }
+
         if (response.ok) return data;
-        lastError = new Error(data?.error || `${response.status} ${response.statusText}`);
-        if (!(response.status===429 || response.status>=500) || attempt===maxRetries) throw lastError;
-      } catch (err) {
+
+        const err = new Error(data?.error || `${response.status} ${response.statusText}`);
+        err.status = response.status;
         lastError = err;
-        if (attempt===maxRetries) throw err;
+
+        const retryable = response.status===408 || response.status===429 || response.status>=500;
+        if (!retryable || attempt===maxRetries) throw err;
+      } catch (err) {
+        if (err?.name === 'AbortError') {
+          lastError = new Error('資料服務連線逾時');
+        } else if (err instanceof TypeError && /fetch/i.test(err.message || '')) {
+          lastError = new Error('資料服務連線暫時失敗');
+        } else {
+          lastError = err;
+        }
+
+        if (attempt===maxRetries) throw lastError;
+      } finally {
+        clearTimeout(timer);
       }
-      await sleep(450 * Math.pow(2, attempt));
+
+      await sleep(600 * Math.pow(2, attempt));
     }
+
     throw lastError || new Error('資料取得失敗');
   }
 
