@@ -1,8 +1,13 @@
-GitHub 更新：
-1. 解壓縮 ZIP。
-2. 上傳新版 index.html 到 stock-return-backtester Repository 根目錄。
-3. 覆蓋原本 index.html。
-4. Commit changes。
-5. 等待 GitHub Pages 更新。
+v1.0 更新方式
 
-Cloudflare Worker 不需要重新部署。
+1. 解壓縮 ZIP。
+2. GitHub → stock-return-backtester。
+3. Add file → Upload files。
+4. 用新版 index.html 覆蓋 Repository 根目錄的 index.html。
+5. Commit changes。
+6. 等待 GitHub Pages 更新。
+
+Cloudflare Worker 若右上角已顯示：
+Yahoo Finance 已連線 · v0.9
+
+就不需要重新部署 Worker。
