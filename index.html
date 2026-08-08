@@ -7,7 +7,7 @@
 <meta name="description" content="台股與美股含息報酬回測，完整比較含息損益、報酬率、XIRR、期末資產、累計投入、股息收入、最大回撤與期末持股。">
 <style>
 :root{font-family:Inter,"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color:#172033;background:#f5f7fa;line-height:1.5}
-*{box-sizing:border-box}body{margin:0;background:#f5f7fa}button,input{font:inherit}button{cursor:pointer}main{max-width:1200px;margin:auto;padding:26px 18px 60px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.eyebrow{margin:0 0 5px;color:#526d82;font-size:12px;font-weight:800;letter-spacing:.1em}.hero h1{margin:0;font-size:clamp(28px,4vw,42px)}.hero p{margin:8px 0 0;color:#5d6b7c}.badge{white-space:nowrap;padding:8px 12px;border-radius:999px;background:#fff3cd;color:#6b5200;border:1px solid #ead98b;font-weight:750}.badge.ok{background:#e9f7ee;color:#176b39;border-color:#b8e2c6}.panel,.settings,.results,.notice{background:#fff;border:1px solid #dce3eb;border-radius:16px;box-shadow:0 8px 28px rgba(30,45,70,.045)}.settings{padding:17px 18px;margin-bottom:16px}.settings-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:end}.settings label,.field label{display:block;font-weight:760;margin-bottom:7px}.settings small{display:block;margin-top:7px;color:#66758a}.settings input,.field input{width:100%;padding:11px 12px;border:1px solid #c9d3df;border-radius:10px;background:white}.panel{padding:20px}.field{margin-bottom:16px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.symbol-field{position:relative}.dropdown{position:absolute;z-index:20;top:76px;left:0;right:0;background:#fff;border:1px solid #ccd6e2;border-radius:12px;box-shadow:0 12px 30px rgba(30,45,70,.14);max-height:330px;overflow:auto}.dropdown button{width:100%;display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;text-align:left;padding:10px 12px;border:0;border-bottom:1px solid #edf1f5;background:#fff}.dropdown button:hover{background:#f2f7fb}.dropdown button strong{font-variant-numeric:tabular-nums}.dropdown button small{color:#6b778c}.selection{margin:7px 0 0;color:#5b6b7f;font-size:14px}.segmented{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}.segmented button{padding:10px;border:0;background:#fff}.segmented button.active{background:#172b4d;color:#fff}.switches{display:flex;flex-wrap:wrap;gap:20px;margin:8px 0 18px}.switches label{font-weight:650}.primary,.secondary{border:0;border-radius:10px;padding:11px 16px;font-weight:800}.primary{background:#1976d2;color:#fff;min-width:150px}.primary:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#eef3f8;color:#243b53}.status{margin:12px 0 0;color:#334e68;white-space:pre-line}.notice{padding:13px 15px;margin-bottom:16px;color:#4b5f73;background:#f9fbfd}.notice strong{color:#263b50}.fx-note{display:grid;gap:4px;background:#f2f7fc;border:1px solid #d8e6f2;border-radius:12px;padding:12px 14px;margin-bottom:15px}.fx-note span{color:#526174}.results{margin-top:18px;padding:18px}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}.result-card{border:1px solid #dde5ee;border-radius:14px;padding:15px}.result-card h2{font-size:19px;margin:0 0 10px}.result-card h2 span{font-size:14px;font-weight:600;color:#637083}.result-card h2 em{display:inline-block;font-style:normal;font-size:11px;margin-left:5px;background:#eef3f8;border-radius:999px;padding:3px 7px}.result-card dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:9px}.result-card dl div{background:#f8fafc;border-radius:9px;padding:9px}.result-card dt{font-size:12px;color:#65758b}.result-card dd{margin:2px 0 0;font-weight:800}.result-card p{font-size:13px;color:#65758b}.result-card details{font-size:13px}.chart-wrap{margin-top:18px;border:1px solid #dde5ee;border-radius:14px;padding:12px}.chart-title{font-weight:800;margin:0 0 8px}.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;margin:6px 0 8px}.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:18px;height:3px;background:#222;display:inline-block}canvas{width:100%;height:360px;display:block;background:#fff;border-radius:8px}footer{margin-top:20px;color:#6b778c;font-size:13px;text-align:center}.warning{color:#8a5a00}.error{color:#a61b1b}.muted{color:#6b778c}.purchase-note{margin:-2px 0 14px;color:#526174;font-size:14px}.comparison-wrap{overflow-x:auto;border:1px solid #dde5ee;border-radius:14px}.comparison-table{width:100%;min-width:1450px;border-collapse:separate;border-spacing:0;background:#fff}.comparison-table th,.comparison-table td{padding:13px 15px;border-right:1px solid #e7edf3;border-bottom:1px solid #e7edf3;text-align:right;vertical-align:middle;white-space:nowrap}.comparison-table thead th{background:#eef3f8;color:#1e2a3b;font-weight:850}.comparison-table th:first-child,.comparison-table td:first-child{text-align:left;font-weight:800}.comparison-table tbody tr:first-child{background:#eef6ff}.comparison-table tbody tr:hover{background:#f7fafc}.comparison-table tbody tr:first-child:hover{background:#e8f3ff}.comparison-table tr:last-child td{border-bottom:0}.comparison-table th:last-child,.comparison-table td:last-child{border-right:0}.comparison-table .symbol-name{display:block;color:#66758a;font-size:12px;font-weight:600;margin-top:2px}.comparison-table .usd-tag{display:inline-block;font-size:10px;background:#eef3f8;border-radius:999px;padding:2px 6px;margin-left:4px}.comparison-table .fetch-error{color:#a61b1b;font-weight:700;text-align:left}.result-notes{margin-top:12px;font-size:13px;color:#5f6f82}.result-notes details{border:1px solid #e1e7ee;border-radius:10px;padding:9px 11px;margin-top:8px;background:#fbfcfe}.canvas-shell{min-width:0;position:relative}.chart-tooltip{position:absolute;z-index:20;pointer-events:none;width:min(310px,calc(100vw - 42px));border:1px solid #cfd9e5;background:rgba(255,255,255,.97);box-shadow:0 12px 32px rgba(23,43,77,.18);border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;gap:6px;color:#43536a;backdrop-filter:blur(4px)}.chart-tooltip[hidden]{display:none}.chart-tooltip strong{color:#172033}.chart-tooltip .tip-date{font-size:12px;color:#65758b;margin-bottom:2px}.chart-tooltip .tip-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;align-items:center}.chart-tooltip .tip-dot{width:9px;height:9px;border-radius:50%}.chart-tooltip .tip-value{text-align:right;font-weight:800;color:#172033}.chart-tooltip .tip-symbol{font-weight:700}.chart-tooltip .tip-trade-date{display:block;color:#7a8797;font-size:10px}.axis-point{display:none}@media(max-width:760px){.hero{display:block}.hero-side{align-items:flex-start;margin-top:12px}.badge{display:inline-block;margin-top:0}.field-grid,.settings-row{grid-template-columns:1fr}.dropdown{top:76px}.result-card dl{grid-template-columns:1fr 1fr}}
+*{box-sizing:border-box}body{margin:0;background:#f5f7fa}button,input{font:inherit}button{cursor:pointer}main{max-width:1200px;margin:auto;padding:26px 18px 60px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.eyebrow{margin:0 0 5px;color:#526d82;font-size:12px;font-weight:800;letter-spacing:.1em}.hero h1{margin:0;font-size:clamp(28px,4vw,42px)}.hero p{margin:8px 0 0;color:#5d6b7c}.badge{white-space:nowrap;padding:8px 12px;border-radius:999px;background:#fff3cd;color:#6b5200;border:1px solid #ead98b;font-weight:750}.badge.ok{background:#e9f7ee;color:#176b39;border-color:#b8e2c6}.panel,.settings,.results,.notice{background:#fff;border:1px solid #dce3eb;border-radius:16px;box-shadow:0 8px 28px rgba(30,45,70,.045)}.settings{padding:17px 18px;margin-bottom:16px}.settings-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:end}.settings label,.field label{display:block;font-weight:760;margin-bottom:7px}.settings small{display:block;margin-top:7px;color:#66758a}.settings input,.field input{width:100%;padding:11px 12px;border:1px solid #c9d3df;border-radius:10px;background:white}.field input.invalid{border:2px solid #d92d20;background:#fff7f6;box-shadow:0 0 0 3px rgba(217,45,32,.08)}.panel{padding:20px}.field{margin-bottom:16px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.symbol-field{position:relative}.dropdown{position:absolute;z-index:20;top:74px;left:0;right:0;background:#fff;border:1px solid #ccd6e2;border-radius:12px;box-shadow:0 12px 30px rgba(30,45,70,.14);max-height:330px;overflow:auto}.dropdown button{width:100%;display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;text-align:left;padding:10px 12px;border:0;border-bottom:1px solid #edf1f5;background:#fff}.dropdown button:hover{background:#f2f7fb}.dropdown button strong{font-variant-numeric:tabular-nums}.dropdown button small{color:#6b778c}.field-error{margin-top:7px;color:#b42318;font-size:13px;font-weight:700}.segmented{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}.segmented button{padding:10px;border:0;background:#fff}.segmented button.active{background:#172b4d;color:#fff}.switches{display:flex;flex-wrap:wrap;gap:20px;margin:8px 0 18px}.switches label{font-weight:650}.primary,.secondary{border:0;border-radius:10px;padding:11px 16px;font-weight:800}.primary{background:#1976d2;color:#fff;min-width:150px}.primary:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#eef3f8;color:#243b53}.status{margin:12px 0 0;color:#334e68;white-space:pre-line}.notice{padding:13px 15px;margin-bottom:16px;color:#4b5f73;background:#f9fbfd}.notice strong{color:#263b50}.fx-note{display:grid;gap:4px;background:#f2f7fc;border:1px solid #d8e6f2;border-radius:12px;padding:12px 14px;margin-bottom:15px}.fx-note span{color:#526174}.results{margin-top:18px;padding:18px}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}.result-card{border:1px solid #dde5ee;border-radius:14px;padding:15px}.result-card h2{font-size:19px;margin:0 0 10px}.result-card h2 span{font-size:14px;font-weight:600;color:#637083}.result-card h2 em{display:inline-block;font-style:normal;font-size:11px;margin-left:5px;background:#eef3f8;border-radius:999px;padding:3px 7px}.result-card dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:9px}.result-card dl div{background:#f8fafc;border-radius:9px;padding:9px}.result-card dt{font-size:12px;color:#65758b}.result-card dd{margin:2px 0 0;font-weight:800}.result-card p{font-size:13px;color:#65758b}.result-card details{font-size:13px}.chart-wrap{margin-top:18px;border:1px solid #dde5ee;border-radius:14px;padding:12px}.chart-title{font-weight:800;margin:0 0 8px}.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;margin:6px 0 8px}.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:18px;height:3px;background:#222;display:inline-block}canvas{width:100%;height:360px;display:block;background:#fff;border-radius:8px}footer{margin-top:20px;color:#6b778c;font-size:13px;text-align:center}.warning{color:#8a5a00}.error{color:#a61b1b}.muted{color:#6b778c}.purchase-note{margin:-2px 0 14px;color:#526174;font-size:14px}.comparison-wrap{overflow-x:auto;border:1px solid #dde5ee;border-radius:14px}.comparison-table{width:100%;min-width:1450px;border-collapse:separate;border-spacing:0;background:#fff}.comparison-table th,.comparison-table td{padding:13px 15px;border-right:1px solid #e7edf3;border-bottom:1px solid #e7edf3;text-align:right;vertical-align:middle;white-space:nowrap}.comparison-table thead th{background:#eef3f8;color:#1e2a3b;font-weight:850}.comparison-table th:first-child,.comparison-table td:first-child{text-align:left;font-weight:800}.comparison-table tbody tr:first-child{background:#eef6ff}.comparison-table tbody tr:hover{background:#f7fafc}.comparison-table tbody tr:first-child:hover{background:#e8f3ff}.comparison-table tr:last-child td{border-bottom:0}.comparison-table th:last-child,.comparison-table td:last-child{border-right:0}.comparison-table .symbol-name{display:block;color:#66758a;font-size:12px;font-weight:600;margin-top:2px}.comparison-table .usd-tag{display:inline-block;font-size:10px;background:#eef3f8;border-radius:999px;padding:2px 6px;margin-left:4px}.comparison-table .fetch-error{color:#a61b1b;font-weight:700;text-align:left}.result-notes{margin-top:12px;font-size:13px;color:#5f6f82}.result-notes details{border:1px solid #e1e7ee;border-radius:10px;padding:9px 11px;margin-top:8px;background:#fbfcfe}.canvas-shell{min-width:0;position:relative}.chart-tooltip{position:absolute;z-index:20;pointer-events:none;width:min(310px,calc(100vw - 42px));border:1px solid #cfd9e5;background:rgba(255,255,255,.97);box-shadow:0 12px 32px rgba(23,43,77,.18);border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;gap:6px;color:#43536a;backdrop-filter:blur(4px)}.chart-tooltip[hidden]{display:none}.chart-tooltip strong{color:#172033}.chart-tooltip .tip-date{font-size:12px;color:#65758b;margin-bottom:2px}.chart-tooltip .tip-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;align-items:center}.chart-tooltip .tip-dot{width:9px;height:9px;border-radius:50%}.chart-tooltip .tip-value{text-align:right;font-weight:800;color:#172033}.chart-tooltip .tip-symbol{font-weight:700}.chart-tooltip .tip-trade-date{display:block;color:#7a8797;font-size:10px}.axis-point{display:none}@media(max-width:760px){.hero{display:block}.hero-side{align-items:flex-start;margin-top:12px}.badge{display:inline-block;margin-top:0}.field-grid,.settings-row{grid-template-columns:1fr}.dropdown{top:76px}.result-card dl{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -25,14 +25,13 @@
   <form id="form" class="panel">
     <section class="field symbol-field">
       <label for="symbol">股票名稱或代號（台股或美股）</label>
-      <input id="symbol" value="2330" autocomplete="off" placeholder="例如 23、2330、台積電、AAPL、Apple" />
+      <input id="symbol" value="2330 台積電" autocomplete="off" placeholder="例如 23、2330、台積電、AAPL、Apple" />
       <div id="dropdown" class="dropdown" hidden></div>
-      <p id="selection" class="selection">已選：2330.TW 台積電</p>
     </section>
 
     <section class="field-grid">
-      <div class="field"><label for="start">開始日期</label><input id="start" type="date" min="1990-01-01" value="2015-01-01" /></div>
-      <div class="field"><label for="end">結束日期</label><input id="end" type="date" /></div>
+      <div class="field"><label for="start">開始日期</label><input id="start" type="date" min="2015-01-01" value="2015-01-01" /><div id="startError" class="field-error" hidden>最早回測日期為 2015/01/01。</div></div>
+      <div class="field"><label for="end">結束日期</label><input id="end" type="date" min="2015-01-01" /><div id="endError" class="field-error" hidden>結束日期不可早於開始日期。</div></div>
       <div class="field">
         <label>投入方式</label>
         <div class="segmented"><button id="lumpBtn" type="button" class="active">單筆投入</button><button id="monthlyBtn" type="button">每月定期定額</button></div>
@@ -101,18 +100,23 @@
   let mode = 'lumpSum';
   let selected = enrichTaiwanInfo(QUICK.find(x => x.symbol === '2330.TW'));
   const workerBase = 'https://dark-snowflake-d965.jimmyshieh30.workers.dev';
+  const MIN_START_DATE = '2015-01-01';
+  const US_EXCHANGES = new Set(['NMS','NYQ','NGM','NCM','ASE','PCX','BTS','BATS','NASDAQ','NYSE','NYSEARCA','NYSE ARCA','NYSE MKT']);
   let searchTimer = null;
+  let autoFormatTimer = null;
   let searchSeq = 0;
+  let isRunning = false;
 
   checkWorker();
   loadTodayFx();
+  validateDates();
 
   async function checkWorker() {
     try {
       const data = await api('/health', 2, 12000);
       updateWorkerBadge(true, data.provider || 'Yahoo Finance', data.version || '');
-      if (data.version !== 'v0.9') {
-        setStatus('Cloudflare Worker 尚未更新為 v0.9，請先重新部署新版 Worker。', 'warning');
+      if (data.version !== 'v1.1') {
+        setStatus('Cloudflare Worker 尚未更新為 v1.1，請先重新部署新版 Worker。', 'warning');
       }
     } catch (e) {
       updateWorkerBadge(false);
@@ -167,19 +171,35 @@
   $('symbol').addEventListener('input', () => {
     selected = null;
     clearTimeout(searchTimer);
+    clearTimeout(autoFormatTimer);
+
     const raw = $('symbol').value.trim();
-    const exactTw = lookupTaiwanSymbol(raw);
-    if (exactTw) {
+    const query = extractSearchQuery(raw);
+    const exactTw = lookupTaiwanSymbol(query);
+
+    showLocalMatches(query);
+
+    if (exactTw && query.toUpperCase() === exactTw.display.toUpperCase()) {
       selected = exactTw;
-      $('selection').textContent = `已選：${exactTw.symbol} ${exactTw.name}`;
-    } else {
-      $('selection').textContent = '請從下拉選單選取；也可輸入完整 Yahoo 代號。';
+      autoFormatTimer = setTimeout(() => {
+        if ($('symbol').value.trim() === raw && selected?.symbol === exactTw.symbol) {
+          $('symbol').value = symbolInputText(exactTw);
+          $('dropdown').hidden = true;
+        }
+      }, 650);
     }
-    showLocalMatches(raw);
-    if (workerBase && raw) searchTimer = setTimeout(() => remoteSearch(raw), 320);
+
+    if (workerBase && query) {
+      searchTimer = setTimeout(() => remoteSearch(query), 360);
+    }
   });
 
-  $('symbol').addEventListener('focus', () => showLocalMatches($('symbol').value.trim()));
+  $('symbol').addEventListener('focus', () => {
+    const raw = $('symbol').value.trim();
+    if (!selected || raw !== symbolInputText(selected)) {
+      showLocalMatches(extractSearchQuery(raw));
+    }
+  });
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.symbol-field')) $('dropdown').hidden = true;
   });
@@ -194,7 +214,7 @@
         return ar - br || a.display.localeCompare(b.display, 'zh-Hant');
       })
       .slice(0,18);
-    renderDropdown(uniqueBySymbol(list));
+    renderDropdown(uniqueBySymbol(list).filter(isTaiwanOrUsItem));
   }
 
   async function remoteSearch(raw) {
@@ -202,18 +222,22 @@
     try {
       const data = await api(`/search?q=${encodeURIComponent(raw)}`);
       if (seq !== searchSeq) return;
-      const remote = (data.results || []).map(x => enrichTaiwanInfo({
-        symbol:x.symbol,
-        display:displaySymbol(x.symbol),
-        name:x.name || x.symbol,
-        exchange:x.exchangeDisplay || x.exchange || '',
-        currency:currencyForSymbol(x.symbol, x.currency),
-      }));
+      const remote = (data.results || [])
+        .filter(isTaiwanOrUsSearchResult)
+        .map(x => enrichTaiwanInfo({
+          symbol:x.symbol,
+          display:displaySymbol(x.symbol),
+          name:x.name || x.symbol,
+          exchange:x.exchangeDisplay || x.exchange || '',
+          exchangeCode:x.exchange || '',
+          quoteType:x.quoteType || '',
+          currency:currencyForSymbol(x.symbol, x.currency),
+        }));
       const q = raw.toLowerCase();
       const local = [...QUICK, ...TW_SYMBOLS].filter(x =>
         x.display.toLowerCase().includes(q) || x.symbol.toLowerCase().includes(q) || x.name.toLowerCase().includes(q)
       );
-      const merged = uniqueBySymbol([...local, ...remote]).slice(0,22);
+      const merged = uniqueBySymbol([...local, ...remote]).filter(isTaiwanOrUsItem).slice(0,22);
       renderDropdown(merged);
     } catch {
       // Local suggestions remain usable; Yahoo may rate-limit search independently.
@@ -236,10 +260,38 @@
 
   function selectSymbol(item) {
     item = enrichTaiwanInfo(item);
+    if (!isTaiwanOrUsItem(item)) return;
     selected = {...item, currency:currencyForSymbol(item.symbol,item.currency)};
-    $('symbol').value = item.display || displaySymbol(item.symbol);
-    $('selection').textContent = `已選：${item.symbol} ${item.name || ''}`;
+    $('symbol').value = symbolInputText(selected);
     $('dropdown').hidden = true;
+  }
+
+  $('start').addEventListener('input', validateDates);
+  $('start').addEventListener('change', validateDates);
+  $('end').addEventListener('input', validateDates);
+  $('end').addEventListener('change', validateDates);
+
+  function validateDates() {
+    const start = $('start').value;
+    const end = $('end').value;
+    const startTooEarly = Boolean(start && start < MIN_START_DATE);
+    const badOrder = Boolean(start && end && end < start);
+
+    $('start').classList.toggle('invalid', startTooEarly);
+    $('startError').hidden = !startTooEarly;
+
+    $('end').classList.toggle('invalid', badOrder);
+    $('endError').hidden = !badOrder;
+
+    updateRunButtonState();
+    return !startTooEarly && !badOrder && Boolean(start && end);
+  }
+
+  function updateRunButtonState() {
+    const start = $('start').value;
+    const end = $('end').value;
+    const invalid = !start || !end || start < MIN_START_DATE || end < start;
+    $('runBtn').disabled = isRunning || invalid;
   }
 
   $('form').addEventListener('submit', async (e) => {
@@ -247,13 +299,15 @@
     const start = $('start').value;
     const end = $('end').value;
     const amount = Number($('amount').value);
-    if (!start || !end || start > end) return setStatus('請確認開始與結束日期。', 'error');
+    if (start < MIN_START_DATE) { validateDates(); return setStatus('開始日期最早只能設定為 2015/01/01。', 'error'); }
+    if (!start || !end || start > end) { validateDates(); return setStatus('請確認開始與結束日期。', 'error'); }
     if (!Number.isInteger(amount) || amount <= 0) return setStatus('投入金額請輸入大於 0 的正整數。', 'error');
 
     const mainSymbol = selected || inferManualSymbol($('symbol').value);
     if (!mainSymbol) return setStatus('無法判斷股票代號。台股可輸入 2330，美股可輸入 AAPL。', 'error');
 
-    $('runBtn').disabled = true;
+    isRunning = true;
+    updateRunButtonState();
     $('results').hidden = true;
     setStatus('正在向 Yahoo Finance 取得歷史資料…');
 
@@ -261,29 +315,55 @@
       const priceFetchStart = monthStart(start);
       const mainDataset = await fetchDatasetWithTaiwanFallback(mainSymbol, priceFetchStart, end);
       const resolvedMain = enrichTaiwanInfo({...mainSymbol, symbol:mainDataset.symbol, display:displaySymbol(mainDataset.symbol), currency:currencyForSymbol(mainDataset.symbol, mainDataset.currency)});
+      selected = resolvedMain;
+      $('symbol').value = symbolInputText(resolvedMain);
       if (!mainDataset.bars.length) throw new Error(`${resolvedMain.symbol} 沒有可用歷史價格。`);
 
       const configs = [{symbol:resolvedMain, dataset:mainDataset}];
       const benchmarkFailures = [];
-      setStatus('主標的資料完成，正在逐一取得比較基準…');
       const seen = new Set([resolvedMain.symbol]);
-      for (const b of BENCHMARKS.filter(x => !seen.has(x.symbol))) {
+      const benchmarkTargets = BENCHMARKS.filter(x => !seen.has(x.symbol));
+
+      setStatus('主標的資料完成，正在批次取得比較基準與 USD/TWD…');
+
+      let batch = null;
+      try {
+        const batchSymbols = [...benchmarkTargets.map(x => x.symbol), 'TWD=X'];
+        batch = await fetchChartBatch(batchSymbols, addDays(priceFetchStart, -10), end);
+      } catch {
+        // 若批次端點本身失敗，下面會逐一 fallback。
+      }
+
+      for (const b of benchmarkTargets) {
         try {
-          const dataset = await fetchDatasetWithTaiwanFallback(b, priceFetchStart, end);
-          if (!dataset?.bars?.length) throw new Error('沒有可用歷史價格');
+          let dataset = batch?.[b.symbol]?.data || null;
+          if (!dataset) {
+            dataset = await fetchDatasetWithTaiwanFallback(b, priceFetchStart, end);
+          }
+          if (!dataset?.bars?.length) throw new Error(batch?.[b.symbol]?.error || '沒有可用歷史價格');
           configs.push({symbol:b, dataset});
         } catch (err) {
           benchmarkFailures.push({symbol:b, error:err?.message || String(err)});
         }
-        await sleep(120);
       }
 
-      const needsFx = configs.some(x => currencyForSymbol(x.dataset.symbol,x.dataset.currency) === 'USD');
-      let fxDataset = null;
-      if (needsFx) {
-        setStatus('正在取得 Yahoo USD/TWD 歷史匯率…');
-        fxDataset = await fetchChart('TWD=X', addDays(start,-10), end);
-        if (!fxDataset.bars.length) throw new Error('無法取得 USD/TWD 歷史匯率。');
+      let fxDataset = batch?.['TWD=X']?.data || null;
+      const hasUsdMain = currencyForSymbol(mainDataset.symbol, mainDataset.currency) === 'USD';
+      const hasUsdBenchmark = configs.some(x => currencyForSymbol(x.dataset.symbol,x.dataset.currency) === 'USD');
+
+      if ((hasUsdMain || hasUsdBenchmark) && !fxDataset?.bars?.length) {
+        try {
+          fxDataset = await fetchChart('TWD=X', addDays(start,-10), end);
+        } catch (fxErr) {
+          if (hasUsdMain) throw new Error(`無法取得 USD/TWD 歷史匯率：${fxErr.message}`);
+          // SPY 等美元比較基準失敗時，不讓台股主回測整體失敗。
+          for (let i=configs.length-1; i>=1; i--) {
+            if (currencyForSymbol(configs[i].dataset.symbol, configs[i].dataset.currency) === 'USD') {
+              benchmarkFailures.push({symbol:configs[i].symbol, error:'USD/TWD 歷史匯率取得失敗'});
+              configs.splice(i,1);
+            }
+          }
+        }
       }
 
       setStatus('正在計算回測…');
@@ -306,11 +386,19 @@
         : '';
       setStatus(`完成：共計算 ${results.length} 個標的${failMsg}。Yahoo 資料實際可用起日可能晚於你輸入的日期。`);
     } catch (err) {
-      setStatus(`回測失敗：${err.message}。若右上角未顯示 v0.9，請先重新部署新版 Cloudflare Worker。`, 'error');
+      setStatus(`回測失敗：${err.message}。若右上角未顯示 v1.1，請先重新部署新版 Cloudflare Worker。`, 'error');
     } finally {
-      $('runBtn').disabled = false;
+      isRunning = false;
+      updateRunButtonState();
     }
   });
+
+  async function fetchChartBatch(symbols, start, end) {
+    const unique = [...new Set(symbols.filter(Boolean))];
+    const path = `/batch-chart?symbols=${encodeURIComponent(unique.join(','))}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    const payload = await api(path, 2, 90000);
+    return payload?.results || {};
+  }
 
   async function fetchDatasetWithTaiwanFallback(symbolInfo, start, end) {
     const enriched = enrichTaiwanInfo(symbolInfo);
@@ -816,6 +904,40 @@
 
   window.addEventListener('resize',()=>{if(!$('results').hidden&&window.__chartRepaint)window.__chartRepaint();});
 
+  function extractSearchQuery(raw) {
+    const text = String(raw || '').trim();
+    const m = text.match(/^([0-9A-Za-z^.=\-]+)\s+/);
+    return m ? m[1] : text;
+  }
+
+  function symbolInputText(item) {
+    if (!item) return '';
+    const code = item.display || displaySymbol(item.symbol || '');
+    const name = item.name && item.name !== code && item.name !== item.symbol ? item.name : '';
+    return name ? `${code} ${name}` : code;
+  }
+
+  function isTaiwanOrUsSearchResult(x) {
+    const symbol = String(x.symbol || '').toUpperCase();
+    const quoteType = String(x.quoteType || '').toUpperCase();
+    const exchange = String(x.exchange || '').toUpperCase();
+    const exchangeDisplay = String(x.exchangeDisplay || '').toUpperCase();
+
+    if (/\.(TW|TWO)$/.test(symbol)) return quoteType === 'EQUITY' || quoteType === 'ETF';
+    if (!(quoteType === 'EQUITY' || quoteType === 'ETF')) return false;
+    if (/\.[A-Z]{1,4}$/.test(symbol)) return false;
+    return US_EXCHANGES.has(exchange) || US_EXCHANGES.has(exchangeDisplay) || String(x.currency || '').toUpperCase() === 'USD';
+  }
+
+  function isTaiwanOrUsItem(item) {
+    if (!item) return false;
+    const symbol = String(item.symbol || '').toUpperCase();
+    if (/\.(TW|TWO)$/.test(symbol)) return true;
+    if (/\.[A-Z]{1,4}$/.test(symbol)) return false;
+    const ex = String(item.exchangeCode || item.exchange || '').toUpperCase();
+    return item.currency === 'USD' || US_EXCHANGES.has(ex) || item.exchange === 'US';
+  }
+
   function lookupTaiwanSymbol(raw) {
     const q = String(raw || '').trim().toUpperCase().replace(/\.(TW|TWO)$/i,'');
     return TW_BY_CODE.get(q) || null;
@@ -830,12 +952,12 @@
   }
 
   function inferManualSymbol(raw) {
-    const q=raw.trim().toUpperCase();
+    const q=extractSearchQuery(raw).trim().toUpperCase();
     if(!q)return null;
     const officialTw=lookupTaiwanSymbol(q);if(officialTw)return officialTw;
     const local=QUICK.find(x=>x.display.toUpperCase()===q||x.symbol.toUpperCase()===q);if(local)return local;
     if(/^\d{4,6}[A-Z]?$/.test(q))return {symbol:q,display:q,name:q,exchange:'Taiwan',currency:'TWD'};
-    if(/^[A-Z^][A-Z0-9.^=\-]{0,14}$/.test(q))return {symbol:q,display:q,name:q,exchange:'US',currency:currencyForSymbol(q)};
+    if(/^[A-Z][A-Z0-9^=\-]{0,14}$/.test(q))return {symbol:q,display:q,name:q,exchange:'US',currency:'USD'};
     return null;
   }
 
