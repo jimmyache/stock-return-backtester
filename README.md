@@ -1,25 +1,23 @@
-# 台股與美股含息回測工具 v1.3
+# 台股與美股含息回測工具 — 主標的 Yahoo / 固定基準 KV 架構
 
-本版更新：
+## 資料路徑
 
-- 若主標的上市日期／Yahoo 可取得資料日期晚於使用者設定日：
-  - 自動取得主標的第一個可用交易日
-  - 以「主標的實際可取得區間」作為所有比較標的共同回測區間
-  - 比較表第二欄新增「回測區間」
-- 投入金額只允許大於 0 的正整數
-  - 小數、0、負數、空白均變紅框
-  - 欄位無效時「開始回測」不可按
-- 美股與 USD/TWD：
-  - 長區間前端優先改成 2 年一段
-  - 避免先打一個容易 timeout 的超長 Yahoo request
-- Worker：
-  - 不含任何版本號
-  - Yahoo query2 優先、query1 備援
-  - 使用較完整的瀏覽器 Header
-  - period1/period2 查詢失敗時，備援使用 range=max 並在 Worker 內切出要求區間
-  - range=max 結果快取，減少美股／匯率重複請求
-- 修正股息收入比較表欄位引用錯誤。
+- 使用者主標的：`/chart` → 每次直接 Yahoo Finance。
+- 固定比較基準：`/benchmark-chart` → 只讀 Workers KV。
+- 固定 KV：0050.TW、00631L.TW、SPY、^TWII、TWD=X。
+- 股票搜尋：`/search` → Yahoo Finance（搜尋字串只使用 Cache API 短暫快取）。
 
-## 更新方式
+## 前端修改
 
-這次 `index.html` 與 `cloudflare-worker.js` 都要更新。
+- 移除美股 / USD-TWD 的 2 年分段 request。
+- 一個主標的只送一次 `/chart`。
+- 每個比較基準只送一次 `/benchmark-chart`。
+- 今日匯率也從 `TWD=X` KV 讀取。
+- 移除頁尾資料來源區塊。
+
+## Worker 修改
+
+- `/chart` 不讀 KV、不寫 KV。
+- `/benchmark-chart` 不呼叫 Yahoo，不做 fallback。
+- Cron 只更新固定 5 組 KV。
+- 主標的即使恰好是 SPY / 0050，也仍以主標的身分走 Yahoo；比較列則讀 KV。

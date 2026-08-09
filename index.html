@@ -7,7 +7,7 @@
 <meta name="description" content="台股與美股含息報酬回測，完整比較含息損益、報酬率、XIRR、期末資產、累計投入、股息收入、最大回撤與期末持股。">
 <style>
 :root{font-family:Inter,"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;color:#172033;background:#f5f7fa;line-height:1.5}
-*{box-sizing:border-box}body{margin:0;background:#f5f7fa}button,input{font:inherit}button{cursor:pointer}main{max-width:1200px;margin:auto;padding:26px 18px 60px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.eyebrow{margin:0 0 5px;color:#526d82;font-size:12px;font-weight:800;letter-spacing:.1em}.hero h1{margin:0;font-size:clamp(28px,4vw,42px)}.hero p{margin:8px 0 0;color:#5d6b7c}.badge{white-space:nowrap;padding:8px 12px;border-radius:999px;background:#fff3cd;color:#6b5200;border:1px solid #ead98b;font-weight:750}.badge.ok{background:#e9f7ee;color:#176b39;border-color:#b8e2c6}.panel,.settings,.results,.notice{background:#fff;border:1px solid #dce3eb;border-radius:16px;box-shadow:0 8px 28px rgba(30,45,70,.045)}.settings{padding:17px 18px;margin-bottom:16px}.settings-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:end}.settings label,.field label{display:block;font-weight:760;margin-bottom:7px}.settings small{display:block;margin-top:7px;color:#66758a}.settings input,.field input{width:100%;padding:11px 12px;border:1px solid #c9d3df;border-radius:10px;background:white}.field input.invalid{border:2px solid #d92d20;background:#fff7f6;box-shadow:0 0 0 3px rgba(217,45,32,.08)}.panel{padding:20px}.field{margin-bottom:16px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.symbol-field{position:relative}.dropdown{position:absolute;z-index:20;top:74px;left:0;right:0;background:#fff;border:1px solid #ccd6e2;border-radius:12px;box-shadow:0 12px 30px rgba(30,45,70,.14);max-height:330px;overflow:auto}.dropdown button{width:100%;display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;text-align:left;padding:10px 12px;border:0;border-bottom:1px solid #edf1f5;background:#fff}.dropdown button:hover{background:#f2f7fb}.dropdown button strong{font-variant-numeric:tabular-nums}.dropdown button small{color:#6b778c}.field-error{margin-top:7px;color:#b42318;font-size:13px;font-weight:700}.segmented{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}.segmented button{padding:10px;border:0;background:#fff}.segmented button.active{background:#172b4d;color:#fff}.switches{display:flex;flex-wrap:wrap;gap:20px;margin:8px 0 18px}.switches label{font-weight:650}.primary,.secondary{border:0;border-radius:10px;padding:11px 16px;font-weight:800}.primary{background:#1976d2;color:#fff;min-width:150px}.primary:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#eef3f8;color:#243b53}.status{margin:12px 0 0;color:#334e68;white-space:pre-line}.notice{padding:13px 15px;margin-bottom:16px;color:#4b5f73;background:#f9fbfd}.notice strong{color:#263b50}.fx-note{display:grid;gap:4px;background:#f2f7fc;border:1px solid #d8e6f2;border-radius:12px;padding:12px 14px;margin-bottom:15px}.fx-note span{color:#526174}.results{margin-top:18px;padding:18px}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}.result-card{border:1px solid #dde5ee;border-radius:14px;padding:15px}.result-card h2{font-size:19px;margin:0 0 10px}.result-card h2 span{font-size:14px;font-weight:600;color:#637083}.result-card h2 em{display:inline-block;font-style:normal;font-size:11px;margin-left:5px;background:#eef3f8;border-radius:999px;padding:3px 7px}.result-card dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:9px}.result-card dl div{background:#f8fafc;border-radius:9px;padding:9px}.result-card dt{font-size:12px;color:#65758b}.result-card dd{margin:2px 0 0;font-weight:800}.result-card p{font-size:13px;color:#65758b}.result-card details{font-size:13px}.chart-wrap{margin-top:18px;border:1px solid #dde5ee;border-radius:14px;padding:12px}.chart-title{font-weight:800;margin:0 0 8px}.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;margin:6px 0 8px}.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:18px;height:3px;background:#222;display:inline-block}canvas{width:100%;height:360px;display:block;background:#fff;border-radius:8px}footer{margin-top:20px;color:#6b778c;font-size:13px;text-align:center}.warning{color:#8a5a00}.error{color:#a61b1b}.muted{color:#6b778c}.purchase-note{margin:-2px 0 14px;color:#526174;font-size:14px}.comparison-wrap{overflow-x:auto;border:1px solid #dde5ee;border-radius:14px}.comparison-table{width:100%;min-width:1650px;border-collapse:separate;border-spacing:0;background:#fff}.comparison-table th,.comparison-table td{padding:13px 15px;border-right:1px solid #e7edf3;border-bottom:1px solid #e7edf3;text-align:right;vertical-align:middle;white-space:nowrap}.comparison-table thead th{background:#eef3f8;color:#1e2a3b;font-weight:850}.comparison-table th:first-child,.comparison-table td:first-child{text-align:left;font-weight:800}.comparison-table tbody tr:first-child{background:#eef6ff}.comparison-table tbody tr:hover{background:#f7fafc}.comparison-table tbody tr:first-child:hover{background:#e8f3ff}.comparison-table tr:last-child td{border-bottom:0}.comparison-table th:last-child,.comparison-table td:last-child{border-right:0}.comparison-table .symbol-name{display:block;color:#66758a;font-size:12px;font-weight:600;margin-top:2px}.comparison-table .usd-tag{display:inline-block;font-size:10px;background:#eef3f8;border-radius:999px;padding:2px 6px;margin-left:4px}.comparison-table .fetch-error{color:#a61b1b;font-weight:700;text-align:left}.result-notes{margin-top:12px;font-size:13px;color:#5f6f82}.result-notes details{border:1px solid #e1e7ee;border-radius:10px;padding:9px 11px;margin-top:8px;background:#fbfcfe}.canvas-shell{min-width:0;position:relative}.chart-tooltip{position:absolute;z-index:20;pointer-events:none;width:min(310px,calc(100vw - 42px));border:1px solid #cfd9e5;background:rgba(255,255,255,.97);box-shadow:0 12px 32px rgba(23,43,77,.18);border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;gap:6px;color:#43536a;backdrop-filter:blur(4px)}.chart-tooltip[hidden]{display:none}.chart-tooltip strong{color:#172033}.chart-tooltip .tip-date{font-size:12px;color:#65758b;margin-bottom:2px}.chart-tooltip .tip-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;align-items:center}.chart-tooltip .tip-dot{width:9px;height:9px;border-radius:50%}.chart-tooltip .tip-value{text-align:right;font-weight:800;color:#172033}.chart-tooltip .tip-symbol{font-weight:700}.chart-tooltip .tip-trade-date{display:block;color:#7a8797;font-size:10px}.axis-point{display:none}@media(max-width:760px){.hero{display:block}.hero-side{align-items:flex-start;margin-top:12px}.badge{display:inline-block;margin-top:0}.field-grid,.settings-row{grid-template-columns:1fr}.dropdown{top:76px}.result-card dl{grid-template-columns:1fr 1fr}}
+*{box-sizing:border-box}body{margin:0;background:#f5f7fa}button,input{font:inherit}button{cursor:pointer}main{max-width:1200px;margin:auto;padding:26px 18px 60px}.hero{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:18px}.hero-side{display:flex;flex-direction:column;align-items:flex-end;gap:8px}.eyebrow{margin:0 0 5px;color:#526d82;font-size:12px;font-weight:800;letter-spacing:.1em}.hero h1{margin:0;font-size:clamp(28px,4vw,42px)}.hero p{margin:8px 0 0;color:#5d6b7c}.badge{white-space:nowrap;padding:8px 12px;border-radius:999px;background:#fff3cd;color:#6b5200;border:1px solid #ead98b;font-weight:750}.badge.ok{background:#e9f7ee;color:#176b39;border-color:#b8e2c6}.panel,.settings,.results,.notice{background:#fff;border:1px solid #dce3eb;border-radius:16px;box-shadow:0 8px 28px rgba(30,45,70,.045)}.settings{padding:17px 18px;margin-bottom:16px}.settings-row{display:grid;grid-template-columns:1fr auto auto;gap:10px;align-items:end}.settings label,.field label{display:block;font-weight:760;margin-bottom:7px}.settings small{display:block;margin-top:7px;color:#66758a}.settings input,.field input{width:100%;padding:11px 12px;border:1px solid #c9d3df;border-radius:10px;background:white}.field input.invalid{border:2px solid #d92d20;background:#fff7f6;box-shadow:0 0 0 3px rgba(217,45,32,.08)}.panel{padding:20px}.field{margin-bottom:16px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.symbol-field{position:relative}.dropdown{position:absolute;z-index:20;top:74px;left:0;right:0;background:#fff;border:1px solid #ccd6e2;border-radius:12px;box-shadow:0 12px 30px rgba(30,45,70,.14);max-height:330px;overflow:auto}.dropdown button{width:100%;display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:center;text-align:left;padding:10px 12px;border:0;border-bottom:1px solid #edf1f5;background:#fff}.dropdown button:hover{background:#f2f7fb}.dropdown button strong{font-variant-numeric:tabular-nums}.dropdown button small{color:#6b778c}.field-error{margin-top:7px;color:#b42318;font-size:13px;font-weight:700}.segmented{display:grid;grid-template-columns:1fr 1fr;border:1px solid #cbd5e1;border-radius:10px;overflow:hidden}.segmented button{padding:10px;border:0;background:#fff}.segmented button.active{background:#172b4d;color:#fff}.switches{display:flex;flex-wrap:wrap;gap:20px;margin:8px 0 18px}.switches label{font-weight:650}.primary,.secondary{border:0;border-radius:10px;padding:11px 16px;font-weight:800}.primary{background:#1976d2;color:#fff;min-width:150px}.primary:disabled{opacity:.55;cursor:not-allowed}.secondary{background:#eef3f8;color:#243b53}.status{margin:12px 0 0;color:#334e68;white-space:pre-line}.notice{padding:13px 15px;margin-bottom:16px;color:#4b5f73;background:#f9fbfd}.notice strong{color:#263b50}.fx-note{display:grid;gap:4px;background:#f2f7fc;border:1px solid #d8e6f2;border-radius:12px;padding:12px 14px;margin-bottom:15px}.fx-note span{color:#526174}.results{margin-top:18px;padding:18px}.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}.result-card{border:1px solid #dde5ee;border-radius:14px;padding:15px}.result-card h2{font-size:19px;margin:0 0 10px}.result-card h2 span{font-size:14px;font-weight:600;color:#637083}.result-card h2 em{display:inline-block;font-style:normal;font-size:11px;margin-left:5px;background:#eef3f8;border-radius:999px;padding:3px 7px}.result-card dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:9px}.result-card dl div{background:#f8fafc;border-radius:9px;padding:9px}.result-card dt{font-size:12px;color:#65758b}.result-card dd{margin:2px 0 0;font-weight:800}.result-card p{font-size:13px;color:#65758b}.result-card details{font-size:13px}.chart-wrap{margin-top:18px;border:1px solid #dde5ee;border-radius:14px;padding:12px}.chart-title{font-weight:800;margin:0 0 8px}.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:12px;margin:6px 0 8px}.legend span{display:inline-flex;align-items:center;gap:6px}.legend i{width:18px;height:3px;background:#222;display:inline-block}canvas{width:100%;height:360px;display:block;background:#fff;border-radius:8px}.warning{color:#8a5a00}.error{color:#a61b1b}.muted{color:#6b778c}.purchase-note{margin:-2px 0 14px;color:#526174;font-size:14px}.comparison-wrap{overflow-x:auto;border:1px solid #dde5ee;border-radius:14px}.comparison-table{width:100%;min-width:1650px;border-collapse:separate;border-spacing:0;background:#fff}.comparison-table th,.comparison-table td{padding:13px 15px;border-right:1px solid #e7edf3;border-bottom:1px solid #e7edf3;text-align:right;vertical-align:middle;white-space:nowrap}.comparison-table thead th{background:#eef3f8;color:#1e2a3b;font-weight:850}.comparison-table th:first-child,.comparison-table td:first-child{text-align:left;font-weight:800}.comparison-table tbody tr:first-child{background:#eef6ff}.comparison-table tbody tr:hover{background:#f7fafc}.comparison-table tbody tr:first-child:hover{background:#e8f3ff}.comparison-table tr:last-child td{border-bottom:0}.comparison-table th:last-child,.comparison-table td:last-child{border-right:0}.comparison-table .symbol-name{display:block;color:#66758a;font-size:12px;font-weight:600;margin-top:2px}.comparison-table .usd-tag{display:inline-block;font-size:10px;background:#eef3f8;border-radius:999px;padding:2px 6px;margin-left:4px}.comparison-table .fetch-error{color:#a61b1b;font-weight:700;text-align:left}.result-notes{margin-top:12px;font-size:13px;color:#5f6f82}.result-notes details{border:1px solid #e1e7ee;border-radius:10px;padding:9px 11px;margin-top:8px;background:#fbfcfe}.canvas-shell{min-width:0;position:relative}.chart-tooltip{position:absolute;z-index:20;pointer-events:none;width:min(310px,calc(100vw - 42px));border:1px solid #cfd9e5;background:rgba(255,255,255,.97);box-shadow:0 12px 32px rgba(23,43,77,.18);border-radius:12px;padding:11px 12px;display:flex;flex-direction:column;gap:6px;color:#43536a;backdrop-filter:blur(4px)}.chart-tooltip[hidden]{display:none}.chart-tooltip strong{color:#172033}.chart-tooltip .tip-date{font-size:12px;color:#65758b;margin-bottom:2px}.chart-tooltip .tip-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:7px;align-items:center}.chart-tooltip .tip-dot{width:9px;height:9px;border-radius:50%}.chart-tooltip .tip-value{text-align:right;font-weight:800;color:#172033}.chart-tooltip .tip-symbol{font-weight:700}.chart-tooltip .tip-trade-date{display:block;color:#7a8797;font-size:10px}.axis-point{display:none}@media(max-width:760px){.hero{display:block}.hero-side{align-items:flex-start;margin-top:12px}.badge{display:inline-block;margin-top:0}.field-grid,.settings-row{grid-template-columns:1fr}.dropdown{top:76px}.result-card dl{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
@@ -63,8 +63,6 @@
       </div>
     </div>
   </section>
-
-  <footer>資料來源：Yahoo Finance。比較基準預設包含 0050、00631L、SPY 與加權指數。本工具僅供研究與教育用途，不構成投資建議。</footer>
 </main>
 <script>
 (() => {
@@ -116,7 +114,7 @@
     try {
       const today = localDateIso(new Date());
       const start = addDays(today, -10);
-      const data = await fetchChart('TWD=X', start, today);
+      const data = await fetchBenchmarkChart('TWD=X', start, today);
       const bars = (data.bars || []).filter(x => Number.isFinite(Number(x.close)));
       if (!bars.length) throw new Error('沒有可用匯率');
       const latest = bars[bars.length - 1];
@@ -124,7 +122,7 @@
       badge.textContent = `今日匯率：1 美元 = ${rate.toFixed(2)} 台幣`;
       badge.className = 'badge ok';
       badge.title = latest.date === today
-        ? `Yahoo USD/TWD，資料日期 ${latest.date}`
+        ? `匯率資料日期 ${latest.date}`
         : `今日非外匯交易日或尚未更新，採最近可用資料 ${latest.date}`;
     } catch (e) {
       badge.textContent = '今日匯率：暫時無法取得';
@@ -312,7 +310,7 @@
 
     try {
       const priceFetchStart = monthStart(start);
-      const mainDataset = await fetchDatasetWithTaiwanFallback(mainSymbol, priceFetchStart, end);
+      const mainDataset = await fetchMainDatasetWithTaiwanFallback(mainSymbol, priceFetchStart, end);
       const resolvedMain = enrichTaiwanInfo({...mainSymbol, symbol:mainDataset.symbol, display:displaySymbol(mainDataset.symbol), currency:currencyForSymbol(mainDataset.symbol, mainDataset.currency)});
       selected = resolvedMain;
       $('symbol').value = symbolInputText(resolvedMain);
@@ -339,13 +337,12 @@
 
       for (const b of benchmarkTargets) {
         try {
-          const dataset = await fetchDatasetWithTaiwanFallback(b, comparisonFetchStart, comparisonEnd);
-          if (!dataset?.bars?.length) throw new Error('沒有可用歷史價格');
+          const dataset = await fetchBenchmarkChart(b.symbol, comparisonFetchStart, comparisonEnd);
+          if (!dataset?.bars?.length) throw new Error('比較基準 KV 沒有可用歷史價格');
           configs.push({symbol:b, dataset});
         } catch (err) {
           benchmarkFailures.push({symbol:b, error:err?.message || String(err)});
         }
-        await sleep(900);
       }
 
       const hasUsdMain = currencyForSymbol(mainDataset.symbol, mainDataset.currency) === 'USD';
@@ -355,7 +352,7 @@
       if (hasUsdMain || hasUsdBenchmark) {
         try {
           setStatus('正在取得 USD/TWD 歷史匯率…');
-          fxDataset = await fetchChart('TWD=X', addDays(comparisonStart,-14), comparisonEnd);
+          fxDataset = await fetchBenchmarkChart('TWD=X', addDays(comparisonStart,-14), comparisonEnd);
         } catch (fxErr) {
           if (hasUsdMain) throw fxErr;
           for (let i=configs.length-1; i>=1; i--) {
@@ -378,7 +375,7 @@
           reinvest:$('reinvest').checked,
           fxDataset,
         });
-        if (item.symbol.priceIndex) result.warnings.push('加權指數使用 Yahoo Finance 的 ^TWII 價格指數資料。');
+        if (item.symbol.priceIndex) result.warnings.push('加權指數使用 ^TWII 價格指數資料。');
         results.push(result);
       }
       renderResults(results, benchmarkFailures, {start:comparisonStart, end:comparisonEnd});
@@ -394,128 +391,47 @@
     }
   });
 
-  async function fetchDatasetWithTaiwanFallback(symbolInfo, start, end) {
+  // 使用者輸入的主標的：每次回測都走 /chart，直接向 Yahoo 取得。
+  // 不讀 Workers KV，也不做前端 2 年分段。
+  async function fetchMainDatasetWithTaiwanFallback(symbolInfo, start, end) {
     const enriched = enrichTaiwanInfo(symbolInfo);
     const raw = enriched.symbol || enriched.display;
-    if (/\.(TW|TWO)$/i.test(raw)) return fetchChart(raw, start, end);
+
+    if (/\.(TW|TWO)$/i.test(raw)) {
+      return fetchYahooChart(raw, start, end);
+    }
+
     if (/^\d{4,6}[A-Z]?$/i.test(raw)) {
       const official = lookupTaiwanSymbol(raw);
-      if (official) return fetchChart(official.symbol, start, end);
-      try { return await fetchChart(`${raw}.TW`, start, end); }
-      catch (first) {
-        try { return await fetchChart(`${raw}.TWO`, start, end); }
-        catch { throw first; }
+      if (official) {
+        return fetchYahooChart(official.symbol, start, end);
+      }
+
+      try {
+        return await fetchYahooChart(`${raw}.TW`, start, end);
+      } catch (first) {
+        try {
+          return await fetchYahooChart(`${raw}.TWO`, start, end);
+        } catch {
+          throw first;
+        }
       }
     }
-    return fetchChart(raw, start, end);
+
+    return fetchYahooChart(raw, start, end);
   }
 
-  function preferChunkedYahoo(symbol, start, end) {
-    const s = String(symbol || '').toUpperCase();
-    const isTaiwan = /\.(TW|TWO)$/.test(s) || s === '^TWII';
-    return !isTaiwan && daysBetween(start, end) > 500;
-  }
-
-  function isNoDataError(error) {
-    return /沒有可用|無 .* 可用|no data found|possibly delisted|not found/i.test(error?.message || '');
-  }
-
-  async function fetchChart(symbol, start, end) {
+  // 主標的 Yahoo route：一個標的一次 HTTP request。
+  async function fetchYahooChart(symbol, start, end) {
     const path = `/chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
-
-    // 美股與 USD/TWD 長區間直接採 2 年分段，避免先做一次容易失敗的超長 Yahoo request。
-    if (preferChunkedYahoo(symbol, start, end)) {
-      try {
-        return await fetchChartInChunks(symbol, start, end, 2);
-      } catch (chunkError) {
-        // 分段仍失敗時，再做一次整段備援。
-        return await api(path, 1, 45000);
-      }
-    }
-
-    try {
-      return await api(path, 1, 45000);
-    } catch (firstError) {
-      if (daysBetween(start, end) < 800) throw firstError;
-      return await fetchChartInChunks(symbol, start, end, 2);
-    }
+    return api(path, 0, 45000);
   }
 
-  async function fetchChartInChunks(symbol, start, end, yearsPerChunk=2) {
-    const chunks = makeDateChunks(start, end, yearsPerChunk);
-    const parts = [];
-    let lastError = null;
-
-    for (let i=0; i<chunks.length; i++) {
-      const [chunkStart, chunkEnd] = chunks[i];
-      const path = `/chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(chunkStart)}&end=${encodeURIComponent(chunkEnd)}`;
-      try {
-        const part = await api(path, 1, 45000);
-        if (part?.bars?.length) parts.push(part);
-      } catch (error) {
-        lastError = error;
-        // 標的尚未上市的早期分段可以跳過；真正的連線錯誤不能靜默略過。
-        if (!isNoDataError(error)) throw error;
-      }
-      if (i < chunks.length - 1) await sleep(650);
-    }
-
-    if (!parts.length) throw lastError || new Error(`${symbol} 沒有可用資料`);
-    return mergeChartParts(parts, symbol);
-  }
-
-  function makeDateChunks(start, end, yearsPerChunk=3) {
-    const out = [];
-    let cursor = start;
-    while (cursor <= end) {
-      const d = new Date(`${cursor}T00:00:00Z`);
-      d.setUTCFullYear(d.getUTCFullYear() + yearsPerChunk);
-      const candidateEnd = addDays(d.toISOString().slice(0,10), -1);
-      const chunkEnd = candidateEnd < end ? candidateEnd : end;
-      out.push([cursor, chunkEnd]);
-      if (chunkEnd >= end) break;
-      cursor = addDays(chunkEnd, 1);
-    }
-    return out;
-  }
-
-  function mergeChartParts(parts, fallbackSymbol) {
-    const valid = parts.filter(Boolean);
-    if (!valid.length) throw new Error(`${fallbackSymbol} 沒有可用資料`);
-
-    const first = valid[0];
-    const merged = {
-      ...first,
-      symbol: first.symbol || fallbackSymbol,
-      bars: [],
-      dividends: [],
-      splits: [],
-    };
-
-    const barMap = new Map();
-    const divMap = new Map();
-    const splitMap = new Map();
-
-    for (const part of valid) {
-      for (const row of (part.bars || [])) {
-        if (row?.date) barMap.set(row.date, row);
-      }
-      for (const row of (part.dividends || [])) {
-        if (row?.date) divMap.set(`${row.date}|${row.amount}`, row);
-      }
-      for (const row of (part.splits || [])) {
-        if (row?.date) splitMap.set(`${row.date}|${row.ratio}`, row);
-      }
-    }
-
-    merged.bars = [...barMap.values()].sort((a,b)=>a.date.localeCompare(b.date));
-    merged.dividends = [...divMap.values()].sort((a,b)=>a.date.localeCompare(b.date));
-    merged.splits = [...splitMap.values()].sort((a,b)=>a.date.localeCompare(b.date));
-    return merged;
-  }
-
-  function daysBetween(start, end) {
-    return Math.max(0, Math.round((Date.parse(`${end}T00:00:00Z`) - Date.parse(`${start}T00:00:00Z`)) / 86400000));
+  // 固定比較基準與 USD/TWD：只讀 Workers KV，不允許 Yahoo fallback。
+  // 一個比較標的一次 HTTP request，不再做 2 年分段。
+  async function fetchBenchmarkChart(symbol, start, end) {
+    const path = `/benchmark-chart?symbol=${encodeURIComponent(symbol)}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+    return api(path, 0, 15000);
   }
 
   async function api(path, maxRetries=3, timeoutMs=22000) {
